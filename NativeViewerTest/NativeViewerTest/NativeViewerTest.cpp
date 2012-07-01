@@ -4,14 +4,22 @@
 #include "stdafx.h"
 
 
-
 int _tmain(int argc, _TCHAR* argv[])
 {
-  cv::Mat img = cv::imread("../data/mountains.jpg", -1);
+  try
+  {
+    cv::Mat empty;
+    cv::Mat img = cv::imread("../data/mountains.jpg", -1);
 
-  int cn_mask = CV_MAT_CN_MASK;
-  int type_mask = CV_MAT_TYPE_MASK;
-  int depth_mask = CV_MAT_DEPTH_MASK;
+    int ndims = CV_MAX_DIM;
+    std::vector<int> sizes(ndims, 1);
+    cv::Mat many_dims(ndims, &sizes[0], CV_8UC3);
+  }
+  catch (cv::Exception& e)
+  {
+    std::cout << e.what();
+  }
+
 
 	return 0;
 }

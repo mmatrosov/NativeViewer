@@ -59,6 +59,21 @@ void ReadHeader(DEBUGHELPER *pHelper, CvMatHeader* pHeader)
   ReadDebuggeeMemoryChecked(pHelper, addr, ptr_size, &pHeader->pdata);
   addr += 6 * ptr_size;
 
+  // Check number of dimensions
+  const int dims = pHeader->dims;
+
+  // Minimum number of dimensions is 2, or 0 for empty cv::Mat
+  if (dims < 0 || dims > CV_MAX_DIM || dims == 1)
+  {
+    throw std::runtime_error("illegal number of dimensions");
+  }
+
+  if (dims == 0)
+  {
+    // Empty cv::Mat, no need to read size and step
+    return;
+  }
+
   // Read MSize field consisting of the only int* member
   DWORDLONG psize = 0;
   ReadDebuggeeMemoryChecked(pHelper, addr, ptr_size, &psize);
@@ -69,29 +84,35 @@ void ReadHeader(DEBUGHELPER *pHelper, CvMatHeader* pHeader)
   ReadDebuggeeMemoryChecked(pHelper, addr, ptr_size, &pstep);  
 
   // Read size values directly
-  pHeader->size.resize(pHeader->dims);
-  ReadDebuggeeMemoryChecked(pHelper, psize, pHeader->dims * sizeof(int), &pHeader->size[0]);
+  pHeader->size.resize(dims);
+  ReadDebuggeeMemoryChecked(pHelper, psize, dims * sizeof(int), &pHeader->size[0]);
 
   // Read step values depending on size of the size_t type
-  pHeader->step.resize(pHeader->dims);
+  pHeader->step.resize(dims);
   if (ptr_size == 8)
   {
     // In 64-bit case values might be directly read into __int64 elements vector
-    ReadDebuggeeMemoryChecked(pHelper, pstep, pHeader->dims * ptr_size, &pHeader->step[0]);
+    ReadDebuggeeMemoryChecked(pHelper, pstep, dims * ptr_size, &pHeader->step[0]);
   }
   else
   {
     // In 32-bit case need to use intermediate __int32 buffer
-    std::vector<__int32> buf(pHeader->dims);
-    ReadDebuggeeMemoryChecked(pHelper, pstep, pHeader->dims * ptr_size, &buf[0]);
+    std::vector<__int32> buf(dims);
+    ReadDebuggeeMemoryChecked(pHelper, pstep, dims * ptr_size, &buf[0]);
     std::copy(buf.begin(), buf.end(), pHeader->step.begin());
   }
 }
 
 //////////////////////////////////////////////////////////////////////////
 ///
-void FormatResult(const CvMatHeader& header, char *pResult, size_t result_size)
+void FormatResult(const CvMatHeader& header, int base, char *pResult, size_t max)
 {
+  if (header.dims == 0)
+  {
+    strcpy_s(pResult, max, "empty");
+    return;
+  }
+
   std::stringstream ss;
 
   const int depth = CV_MAT_DEPTH(header.flags);
@@ -113,15 +134,17 @@ void FormatResult(const CvMatHeader& header, char *pResult, size_t result_size)
 
   ss << "C" << cn;
 
-  ss << " [";
+  ss << " ";
+  if (base == 16) ss << "(0x)";
+  ss << "[";
   for (int i = 0; i < header.dims; ++i)
   {
     if (i > 0) ss << "x";
-    ss << header.size[i];
+    ss << std::setbase(base) << header.size[i];
   }
   ss << "]";
 
-  strcpy_s(pResult, result_size, ss.str().c_str());
+  strcpy_s(pResult, max, ss.str().c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -137,7 +160,7 @@ HRESULT WINAPI CvMatViewer(DWORD dwAddress, DEBUGHELPER *pHelper,
 
     ReadHeader(pHelper, &header);
 
-    FormatResult(header, pResult, max);
+    FormatResult(header, nBase, pResult, max);
   }
   catch (std::exception& e)
   {

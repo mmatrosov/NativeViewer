@@ -12,5 +12,8 @@
 #include <windows.h>
 
 
+#include <opencv2/core/core.hpp>
 
-// TODO: reference additional headers your program requires here
+#include <vector>
+#include <stdexcept>
+#include <algorithm>

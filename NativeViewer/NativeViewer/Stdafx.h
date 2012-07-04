@@ -5,3 +5,10 @@
 #pragma once
 
 #include <Windows.h>
+
+#include <opencv2/core/core.hpp>
+
+#include <vector>
+#include <stdexcept>
+#include <algorithm>
+#include <iomanip>

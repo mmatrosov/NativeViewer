@@ -156,6 +156,30 @@ void FormatResult(const CvMatHeader& header, int base, char *pResult, size_t max
 }
 
 //////////////////////////////////////////////////////////////////////////
+///
+void ReadImageAligned(DEBUGHELPER *pHelper, 
+  const CvMatHeader& header, std::vector<unsigned char>& dst, int& dst_step)
+{
+  const int height = header.rows;
+  const int src_step = static_cast<int>(header.step[0]);
+
+  // Seems like .NET Bitmap requires step to be multiple of 4, so round it up 
+  dst_step = src_step + (4 - src_step % 4) % 4;
+
+  dst.resize(static_cast<size_t>(height * dst_step));
+
+  DWORDLONG pSrc = header.pdata;
+  unsigned char* pDst = &dst[0];
+
+  for (int i = 0; i < height; ++i)
+  {
+    ReadDebuggeeMemoryChecked(pHelper, pSrc, src_step, pDst);
+    pSrc += src_step;
+    pDst += dst_step;
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////
 /// Managed functions
 //////////////////////////////////////////////////////////////////////////
 
@@ -177,20 +201,19 @@ void ShowThumbnail(DEBUGHELPER *pHelper, const CvMatHeader& header)
   // information on key toggle status
   if (state >> 1)
   {
-    // It seems like cv::Mat cannot be allocated with a custom step, so we need to wrap it 
-    // around intermediate buffer
-    DWORD buf_size = static_cast<DWORD>(header.rows * header.step[0]);
-    std::vector<unsigned char> buf(buf_size);
-    unsigned char* pBuf = &buf[0];
+    int step;
+    std::vector<unsigned char> img;
 
-    ReadDebuggeeMemoryChecked(pHelper, header.pdata, buf_size, pBuf);
-
-    cv::Mat image(header.rows, header.cols, 
-      CV_MAT_TYPE(header.flags), pBuf, static_cast<size_t>(header.step[0]));
+    ReadImageAligned(pHelper, header, img, step);
 
     try
     {
-      FormMain^ form = gcnew FormMain;
+      System::Drawing::Bitmap^ bmp = gcnew System::Drawing::Bitmap(
+        header.cols, header.rows, static_cast<int>(step), 
+        System::Drawing::Imaging::PixelFormat::Format24bppRgb, 
+        System::IntPtr(&img[0]));
+
+      FormMain^ form = gcnew FormMain(bmp);
       form->ShowDialog();
     }
     catch (System::Exception^ e)

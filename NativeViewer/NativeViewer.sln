@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NativeViewer", "NativeViewer\NativeViewer.vcxproj", "{E9F1C3A6-7A43-4FD5-B3F7-DF63F2F24941}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NativeViewerLauncher", "NativeViewerLauncher\NativeViewerLauncher.vcxproj", "{0A62D34C-D429-4647-9C40-FC4887F9FAFB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E9F1C3A6-7A43-4FD5-B3F7-DF63F2F24941} = {E9F1C3A6-7A43-4FD5-B3F7-DF63F2F24941}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

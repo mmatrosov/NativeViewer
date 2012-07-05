@@ -2,5 +2,6 @@
 *.opensdf
 *.suo
 *.user
+*.aps
 Debug/
 Release/

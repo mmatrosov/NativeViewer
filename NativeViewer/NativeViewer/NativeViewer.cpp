@@ -3,6 +3,15 @@
 #include "stdafx.h"
 
 #include "custview.h"
+#include "FormMain.h"
+
+using namespace NativeViewer;
+
+//////////////////////////////////////////////////////////////////////////
+/// Unmanaged functions
+//////////////////////////////////////////////////////////////////////////
+
+#pragma unmanaged
 
 class CvMatHeader
 {
@@ -147,6 +156,52 @@ void FormatResult(const CvMatHeader& header, int base, char *pResult, size_t max
 }
 
 //////////////////////////////////////////////////////////////////////////
+/// Managed functions
+//////////////////////////////////////////////////////////////////////////
+
+#pragma managed
+
+//////////////////////////////////////////////////////////////////////////
+///
+void ShowThumbnail(DEBUGHELPER *pHelper, const CvMatHeader& header)
+{
+  if (header.dims == 0)
+  {
+    // No thumbnail for empty image
+    return;
+  }
+
+  SHORT state = GetAsyncKeyState(VK_CONTROL);
+
+  // Check whether the CTRL key is pressed (ignoring low-order bit which handles 
+  // information on key toggle status
+  if (state >> 1)
+  {
+    // It seems like cv::Mat cannot be allocated with a custom step, so we need to wrap it 
+    // around intermediate buffer
+    DWORD buf_size = static_cast<DWORD>(header.rows * header.step[0]);
+    std::vector<unsigned char> buf(buf_size);
+    unsigned char* pBuf = &buf[0];
+
+    ReadDebuggeeMemoryChecked(pHelper, header.pdata, buf_size, pBuf);
+
+    cv::Mat image(header.rows, header.cols, 
+      CV_MAT_TYPE(header.flags), pBuf, static_cast<size_t>(header.step[0]));
+
+    try
+    {
+      FormMain^ form = gcnew FormMain;
+      form->ShowDialog();
+    }
+    catch (System::Exception^ e)
+    {
+      msclr::interop::marshal_context context;
+      throw std::runtime_error(context.marshal_as<std::string>(e->ToString()));
+    }
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////
 ///
 HRESULT WINAPI CvMatViewer(DWORD dwAddress, DEBUGHELPER *pHelper, 
   int nBase, BOOL bUniStrings, char *pResult, size_t max, DWORD reserved)
@@ -160,6 +215,8 @@ HRESULT WINAPI CvMatViewer(DWORD dwAddress, DEBUGHELPER *pHelper,
     ReadHeader(pHelper, &header);
 
     FormatResult(header, nBase, pResult, max);
+
+    ShowThumbnail(pHelper, header);
   }
   catch (std::exception& e)
   {

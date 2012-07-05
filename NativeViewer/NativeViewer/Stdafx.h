@@ -12,3 +12,5 @@
 #include <stdexcept>
 #include <algorithm>
 #include <iomanip>
+
+#include <msclr/marshal_cppstd.h>

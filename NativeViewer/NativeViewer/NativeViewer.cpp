@@ -3,9 +3,6 @@
 #include "stdafx.h"
 
 #include "custview.h"
-#include "FormMain.h"
-
-using namespace NativeViewer;
 
 //////////////////////////////////////////////////////////////////////////
 /// Unmanaged functions
@@ -189,6 +186,11 @@ void ReadImageAligned(DEBUGHELPER *pHelper,
 ///
 void ShowThumbnail(DEBUGHELPER *pHelper, const CvMatHeader& header)
 {
+  using namespace System;
+  using namespace System::Reflection;
+  using namespace System::Drawing;
+  using namespace System::IO;
+
   if (header.dims == 0)
   {
     // No thumbnail for empty image
@@ -201,22 +203,32 @@ void ShowThumbnail(DEBUGHELPER *pHelper, const CvMatHeader& header)
   // information on key toggle status
   if (state >> 1)
   {
-    int step;
-    std::vector<unsigned char> img;
-
-    ReadImageAligned(pHelper, header, img, step);
-
     try
     {
-      System::Drawing::Bitmap^ bmp = gcnew System::Drawing::Bitmap(
-        header.cols, header.rows, static_cast<int>(step), 
-        System::Drawing::Imaging::PixelFormat::Format24bppRgb, 
-        System::IntPtr(&img[0]));
+      // Load GUI assembly and information from it. It cannot be added through project 
+      // references since .NET framework will only search application path and GAC for
+      // the reference, but it resides near the current dll.
+      String^ path = Path::GetDirectoryName(
+        Assembly::GetExecutingAssembly()->Location) + Path::DirectorySeparatorChar;
+      Assembly^ GUI = Assembly::LoadFrom(path + "NativeViewerGUI.dll");
+      Type^ FormMain = GUI->GetType("NativeViewerGUI.FormMain");
+      MethodInfo^ ShowDialog = FormMain->GetMethod("ShowDialog", gcnew array<Type^>{});
+      
+      // Read image contents from debuggee memory
+      int step;
+      std::vector<unsigned char> img;
+      ReadImageAligned(pHelper, header, img, step);
 
-      FormMain^ form = gcnew FormMain(bmp);
-      form->ShowDialog();
+      // Initialize .NET image wrapper
+      Bitmap^ bmp = gcnew Bitmap(header.cols, header.rows, static_cast<int>(step), 
+        Imaging::PixelFormat::Format24bppRgb, IntPtr(&img[0]));
+
+      // Show GUI
+      array<Object^>^ args = gcnew array<Object^>{ bmp };
+      Object^ form = Activator::CreateInstance(FormMain, args);
+      ShowDialog->Invoke(form, nullptr);
     }
-    catch (System::Exception^ e)
+    catch (Exception^ e)
     {
       msclr::interop::marshal_context context;
       throw std::runtime_error(context.marshal_as<std::string>(e->ToString()));

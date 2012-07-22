@@ -9,7 +9,7 @@ int _tmain(int argc, _TCHAR* argv[])
   try
   {
     cv::Mat empty;
-    cv::Mat img = cv::imread("../data/mountains.jpg", -1);
+    cv::Mat img = cv::imread("../../data/mountains.jpg", -1);
 
     int ndims = CV_MAX_DIM;
     std::vector<int> sizes(ndims, 1);

@@ -27,16 +27,11 @@ namespace NativeViewerLauncher {
 				delete components;
 			}
 		}
-  private: System::Windows::Forms::Button^  buttonCall;
-  protected: 
 
-  private: System::Windows::Forms::TextBox^  textBoxResult;
+  private: System::Windows::Forms::Button^ buttonCall;
+  private: System::Windows::Forms::TextBox^ textBoxResult;
 
-
-  protected: 
-
-	private:
-		System::ComponentModel::Container ^components;
+	private: System::ComponentModel::Container ^components;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -82,7 +77,8 @@ namespace NativeViewerLauncher {
 
     }
 #pragma endregion
-  private: System::Void buttonCall_Click(System::Object^  sender, System::EventArgs^  e) 
+
+  private: System::Void buttonCall_Click(System::Object^ sender, System::EventArgs^ e)
            {
              cv::Mat img = cv::imread("../../data/mountains.jpg", -1);
 

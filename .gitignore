@@ -5,3 +5,4 @@
 *.aps
 Debug/
 Release/
+obj/

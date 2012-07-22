@@ -164,7 +164,7 @@ void ReadImageAligned(DEBUGHELPER *pHelper,
   const int src_step = static_cast<int>(header.step[0]);
 
   // Seems like .NET Bitmap requires step to be multiple of 4, so round it up 
-  dst_step = src_step + (4 - src_step % 4) % 4;
+  dst_step = (src_step + 3) & ~3;
 
   dst.resize(static_cast<size_t>(height * dst_step));
 

@@ -1,7 +1,7 @@
 #pragma once
 
-namespace NativeViewer {
-
+namespace NativeViewer 
+{
 	using namespace System;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
@@ -19,7 +19,17 @@ namespace NativeViewer {
 		{
 			InitializeComponent();
 
+      // Set thumbnail image
       pictureBoxThumbnail->Image = image;
+
+      // Adjust window position relative to cursor position
+      Point p = System::Windows::Forms::Cursor::Position;
+      p.Offset(Location - System::Drawing::Size(PointToScreen(Point(2, 2))));
+      Location = p;
+
+      // Wind up the timer
+      timerCheckBounds->Interval = 100;
+      timerCheckBounds->Enabled = true;
 		}
 
 	protected:
@@ -37,19 +47,15 @@ namespace NativeViewer {
   private: System::Windows::Forms::ToolStripStatusLabel^  toolStripStatusLabelDepth;
   private: System::Windows::Forms::ToolStripStatusLabel^  toolStripStatusLabelSize;
   private: System::Windows::Forms::ToolStripStatusLabel^  toolStripStatusLabelScale;
-  protected: 
-
-  protected: 
-
-
-
   private: System::Windows::Forms::PictureBox^  pictureBoxThumbnail;
+  private: System::Windows::Forms::Timer^  timerCheckBounds;
+  private: System::ComponentModel::IContainer^  components;
 
 	private:
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		System::ComponentModel::Container ^components;
+
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -58,11 +64,13 @@ namespace NativeViewer {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+      this->components = (gcnew System::ComponentModel::Container());
       this->statusStripMain = (gcnew System::Windows::Forms::StatusStrip());
       this->toolStripStatusLabelDepth = (gcnew System::Windows::Forms::ToolStripStatusLabel());
       this->toolStripStatusLabelSize = (gcnew System::Windows::Forms::ToolStripStatusLabel());
       this->toolStripStatusLabelScale = (gcnew System::Windows::Forms::ToolStripStatusLabel());
       this->pictureBoxThumbnail = (gcnew System::Windows::Forms::PictureBox());
+      this->timerCheckBounds = (gcnew System::Windows::Forms::Timer(this->components));
       this->statusStripMain->SuspendLayout();
       (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBoxThumbnail))->BeginInit();
       this->SuspendLayout();
@@ -107,6 +115,10 @@ namespace NativeViewer {
       this->pictureBoxThumbnail->TabIndex = 1;
       this->pictureBoxThumbnail->TabStop = false;
       // 
+      // timerCheckBounds
+      // 
+      this->timerCheckBounds->Tick += gcnew System::EventHandler(this, &FormMain::timerCheckBounds_Tick);
+      // 
       // FormMain
       // 
       this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -116,7 +128,8 @@ namespace NativeViewer {
       this->Controls->Add(this->statusStripMain);
       this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::SizableToolWindow;
       this->Name = L"FormMain";
-      this->Text = L"FormMain";
+      this->StartPosition = System::Windows::Forms::FormStartPosition::Manual;
+      this->Text = L"NativeViewer";
       this->statusStripMain->ResumeLayout(false);
       this->statusStripMain->PerformLayout();
       (cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBoxThumbnail))->EndInit();
@@ -125,5 +138,17 @@ namespace NativeViewer {
 
     }
 #pragma endregion
-	};
+
+  private: 
+    [System::Runtime::InteropServices::DllImport("user32.dll")]
+    static IntPtr GetForegroundWindow();
+
+  private: System::Void timerCheckBounds_Tick(System::Object^  sender, System::EventArgs^  e) 
+           {
+             if (!Bounds.Contains(Cursor->Position) || GetForegroundWindow() != Handle)
+             {
+               Close();
+             }             
+           }
+};
 }

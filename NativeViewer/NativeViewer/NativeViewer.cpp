@@ -110,18 +110,12 @@ void ReadHeader(DEBUGHELPER *pHelper, CvMatHeader* pHeader)
 
 //////////////////////////////////////////////////////////////////////////
 ///
-void FormatResult(const CvMatHeader& header, int base, char *pResult, size_t max)
+std::string FlagsToString(int flags)
 {
-  if (header.dims == 0)
-  {
-    strcpy_s(pResult, max, "empty");
-    return;
-  }
-
   std::stringstream ss;
 
-  const int depth = CV_MAT_DEPTH(header.flags);
-  const int cn = CV_MAT_CN(header.flags);
+  const int depth = CV_MAT_DEPTH(flags);
+  const int cn = CV_MAT_CN(flags);
 
   switch (depth)
   {
@@ -139,7 +133,23 @@ void FormatResult(const CvMatHeader& header, int base, char *pResult, size_t max
 
   ss << "C" << cn;
 
-  ss << " ";
+  return ss.str();
+}
+
+//////////////////////////////////////////////////////////////////////////
+///
+void FormatResult(const CvMatHeader& header, int base, char *pResult, size_t max)
+{
+  if (header.dims == 0)
+  {
+    strcpy_s(pResult, max, "empty");
+    return;
+  }
+
+  std::stringstream ss;
+
+  ss << FlagsToString(header.flags) << " ";
+
   if (base == 16) ss << "(0x)";
   ss << "[";
   for (int i = 0; i < header.dims; ++i)
@@ -222,6 +232,9 @@ void ShowThumbnail(DEBUGHELPER *pHelper, const CvMatHeader& header)
       // Initialize .NET image wrapper
       Bitmap^ bmp = gcnew Bitmap(header.cols, header.rows, static_cast<int>(step), 
         Imaging::PixelFormat::Format24bppRgb, IntPtr(&img[0]));
+
+      // Pass information on underlying image format
+      bmp->Tag = gcnew String(FlagsToString(header.flags).c_str());
 
       // Show GUI
       array<Object^>^ args = gcnew array<Object^>{ bmp };

@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Drawing.Drawing2D;
 
 namespace NativeViewerGUI
 {
@@ -22,6 +23,13 @@ namespace NativeViewerGUI
       Point p = System.Windows.Forms.Cursor.Position;
       p.Offset(Location - new Size(PointToScreen(new Point(2, 2))));
       Location = p;
+
+      // Adjust initial window size to fit image size
+      ClientSize = image.Size + (ClientSize - pictureBoxThumbnail.Size);
+
+      // Initialize status bar
+      toolStripStatusLabelSize.Text = String.Format("{0}x{1}", image.Width, image.Height);
+      toolStripStatusLabelDepth.Text = image.Tag as String;
     }
 
     [System.Runtime.InteropServices.DllImport("user32.dll")]

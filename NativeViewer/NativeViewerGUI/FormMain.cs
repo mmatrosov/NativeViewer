@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 
 namespace NativeViewerGUI
 {
@@ -18,6 +19,18 @@ namespace NativeViewerGUI
 
       // Set thumbnail image
       pictureBoxThumbnail.Image = image;
+
+      if (image.PixelFormat == PixelFormat.Format8bppIndexed)
+      {
+        // The only grayscale format available for GDI+ is indexed, and 
+        // the default palette needs to be overridden for proper display
+        ColorPalette palette = image.Palette;
+        
+        Color[] entries = palette.Entries;
+        for (int i = 0; i < 256; ++i) entries[i] = Color.FromArgb(i, i, i);
+
+        image.Palette = palette;
+      }
 
       // Adjust window position relative to cursor position
       Point p = System.Windows.Forms.Cursor.Position;

@@ -92,7 +92,6 @@
       this.ClientSize = new System.Drawing.Size(304, 206);
       this.Controls.Add(this.pictureBoxThumbnail);
       this.Controls.Add(this.statusStripMain);
-      this.DataBindings.Add(new System.Windows.Forms.Binding("MinimumSize", global::NativeViewerGUI.Properties.Settings.Default, "MinSize", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
       this.KeyPreview = true;
       this.Name = "FormMain";

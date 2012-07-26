@@ -169,9 +169,10 @@ void ReadImageAligned(DEBUGHELPER *pHelper,
 {
   const int height = header.rows;
   const int src_step = static_cast<int>(header.step[0]);
+  const int line_size = static_cast<int>(header.cols * header.step[1]);
 
   // Seems like .NET Bitmap requires step to be multiple of 4, so round it up 
-  dst_step = (src_step + 3) & ~3;
+  dst_step = (line_size + 3) & ~3;
 
   dst.resize(static_cast<size_t>(height * dst_step));
 
@@ -180,7 +181,7 @@ void ReadImageAligned(DEBUGHELPER *pHelper,
 
   for (int i = 0; i < height; ++i)
   {
-    ReadDebuggeeMemoryChecked(pHelper, pSrc, src_step, pDst);
+    ReadDebuggeeMemoryChecked(pHelper, pSrc, line_size, pDst);
     pSrc += src_step;
     pDst += dst_step;
   }
@@ -201,17 +202,21 @@ void ShowThumbnail(DEBUGHELPER *pHelper, const CvMatHeader& header)
   using namespace System::Drawing;
   using namespace System::IO;
 
-  if (header.dims != 2)
-  {
-    return;
-  }
-
   SHORT state = GetAsyncKeyState(VK_CONTROL);
 
   // Check whether the CTRL key is pressed (ignoring low-order bit which handles 
   // information on key toggle status
   if (state >> 1)
   {
+    const int depth = CV_MAT_DEPTH(header.flags);
+    const int cn = CV_MAT_CN(header.flags);
+
+    if (header.dims != 2 || depth != CV_8U || cn != 1 && cn != 3)
+    {
+      throw std::logic_error(
+        "only 2-D arrays of type CV_8UC1 or CV_8UC3 are supported for thumbnails");
+    }
+
     try
     {
       // Load GUI assembly and information from it. It cannot be added through project 
@@ -229,8 +234,10 @@ void ShowThumbnail(DEBUGHELPER *pHelper, const CvMatHeader& header)
       ReadImageAligned(pHelper, header, img, step);
 
       // Initialize .NET image wrapper
-      Bitmap^ bmp = gcnew Bitmap(header.cols, header.rows, static_cast<int>(step), 
-        Imaging::PixelFormat::Format24bppRgb, IntPtr(&img[0]));
+      Imaging::PixelFormat format = cn == 1 ? 
+        Imaging::PixelFormat::Format8bppIndexed : Imaging::PixelFormat::Format24bppRgb;
+      Bitmap^ bmp = gcnew Bitmap(
+        header.cols, header.rows, static_cast<int>(step), format, IntPtr(&img[0]));
 
       // Pass information on underlying image format
       bmp->Tag = gcnew String(FlagsToString(header.flags).c_str());
@@ -265,8 +272,15 @@ HRESULT WINAPI CvMatViewer(DWORD dwAddress, DEBUGHELPER *pHelper,
 
     ShowThumbnail(pHelper, header);
   }
+  catch (std::logic_error& e)
+  {
+    // This type of exception indicates an improper use and should be displayed 
+    // to the user as an information message
+    sprintf_s(pResult, max, "NativeViewer: %s.", e.what());
+  }
   catch (std::exception& e)
   {
+    // This type of exception indicates some real error
     sprintf_s(pResult, max, "NativeViewer error: %s.", e.what());
   }
 

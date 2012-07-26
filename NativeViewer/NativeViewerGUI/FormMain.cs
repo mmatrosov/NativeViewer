@@ -24,8 +24,13 @@ namespace NativeViewerGUI
       p.Offset(Location - new Size(PointToScreen(new Point(2, 2))));
       Location = p;
 
-      // Adjust initial window size to fit image size
+      // Adjust the initial window size to fit the image size. However, window size is 
+      // restricted at this point, for it should not be accidentally made too big or too small.
+      MinimumSize = Properties.Settings.Default.AutoSizeMin;
+      MaximumSize = Properties.Settings.Default.AutoSizeMax;
       ClientSize = image.Size + (ClientSize - pictureBoxThumbnail.Size);
+      MinimumSize = new Size();
+      MaximumSize = new Size();
 
       // Initialize status bar
       toolStripStatusLabelSize.Text = String.Format("{0}x{1}", image.Width, image.Height);
@@ -39,6 +44,34 @@ namespace NativeViewerGUI
     {
       // Close window when mouse cursor leaves it or when it loses focus
       if (!Bounds.Contains(Cursor.Position) || GetForegroundWindow() != Handle)
+      {
+        Close();
+      }
+    }
+
+    private void pictureBoxThumbnail_SizeChanged(object sender, EventArgs e)
+    {
+      SizeF PboxSize = pictureBoxThumbnail.Size;
+      SizeF ImgSize = pictureBoxThumbnail.Image.Size;
+
+      double zoom = Math.Min(
+        PboxSize.Width / ImgSize.Width, PboxSize.Height / ImgSize.Height);
+
+      toolStripStatusLabelZoom.Text = (Math.Round(zoom * 100)).ToString() + "%";
+
+      if (zoom > 1)
+      {
+        pictureBoxThumbnail.Interpolation = Properties.Settings.Default.InterpModeStretch;
+      }
+      else
+      {
+        pictureBoxThumbnail.Interpolation = Properties.Settings.Default.InterpModeShrink;
+      }
+    }
+
+    private void FormMain_KeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.KeyCode == Keys.Escape)
       {
         Close();
       }

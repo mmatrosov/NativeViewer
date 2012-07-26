@@ -201,9 +201,8 @@ void ShowThumbnail(DEBUGHELPER *pHelper, const CvMatHeader& header)
   using namespace System::Drawing;
   using namespace System::IO;
 
-  if (header.dims == 0)
+  if (header.dims != 2)
   {
-    // No thumbnail for empty image
     return;
   }
 

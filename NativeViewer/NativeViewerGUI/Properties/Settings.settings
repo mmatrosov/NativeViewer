@@ -3,16 +3,16 @@
   <Profiles />
   <Settings>
     <Setting Name="InterpModeStretch" Type="System.Drawing.Drawing2D.InterpolationMode" Scope="User">
-      <Value Profile="(Default)">HighQualityBilinear</Value>
-    </Setting>
-    <Setting Name="InterpModeShrink" Type="System.Drawing.Drawing2D.InterpolationMode" Scope="User">
       <Value Profile="(Default)">NearestNeighbor</Value>
     </Setting>
-    <Setting Name="AutoSizeMin" Type="System.String" Scope="User">
-      <Value Profile="(Default)">320, 240</Value>
+    <Setting Name="InterpModeShrink" Type="System.Drawing.Drawing2D.InterpolationMode" Scope="User">
+      <Value Profile="(Default)">HighQualityBilinear</Value>
     </Setting>
-    <Setting Name="AutoSizeMax" Type="System.String" Scope="User">
+    <Setting Name="AutoSizeMax" Type="System.Drawing.Size" Scope="User">
       <Value Profile="(Default)">640, 480</Value>
+    </Setting>
+    <Setting Name="AutoSizeMin" Type="System.Drawing.Size" Scope="User">
+      <Value Profile="(Default)">160, 120</Value>
     </Setting>
   </Settings>
 </SettingsFile>

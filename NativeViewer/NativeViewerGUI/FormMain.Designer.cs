@@ -83,6 +83,7 @@
       this.pictureBoxThumbnail.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
       this.pictureBoxThumbnail.TabIndex = 1;
       this.pictureBoxThumbnail.TabStop = false;
+      this.pictureBoxThumbnail.SizeChanged += new System.EventHandler(this.pictureBoxThumbnail_SizeChanged);
       // 
       // FormMain
       // 
@@ -93,9 +94,11 @@
       this.Controls.Add(this.statusStripMain);
       this.DataBindings.Add(new System.Windows.Forms.Binding("MinimumSize", global::NativeViewerGUI.Properties.Settings.Default, "MinSize", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+      this.KeyPreview = true;
       this.Name = "FormMain";
       this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
       this.Text = "NativeViewer";
+      this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormMain_KeyDown);
       this.statusStripMain.ResumeLayout(false);
       this.statusStripMain.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxThumbnail)).EndInit();

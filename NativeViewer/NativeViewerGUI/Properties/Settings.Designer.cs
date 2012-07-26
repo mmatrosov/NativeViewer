@@ -25,7 +25,7 @@ namespace NativeViewerGUI.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("HighQualityBilinear")]
+        [global::System.Configuration.DefaultSettingValueAttribute("NearestNeighbor")]
         public global::System.Drawing.Drawing2D.InterpolationMode InterpModeStretch {
             get {
                 return ((global::System.Drawing.Drawing2D.InterpolationMode)(this["InterpModeStretch"]));
@@ -37,7 +37,7 @@ namespace NativeViewerGUI.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("NearestNeighbor")]
+        [global::System.Configuration.DefaultSettingValueAttribute("HighQualityBilinear")]
         public global::System.Drawing.Drawing2D.InterpolationMode InterpModeShrink {
             get {
                 return ((global::System.Drawing.Drawing2D.InterpolationMode)(this["InterpModeShrink"]));
@@ -49,25 +49,25 @@ namespace NativeViewerGUI.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("320, 240")]
-        public string AutoSizeMin {
+        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        public global::System.Drawing.Size AutoSizeMax {
             get {
-                return ((string)(this["AutoSizeMin"]));
+                return ((global::System.Drawing.Size)(this["AutoSizeMax"]));
             }
             set {
-                this["AutoSizeMin"] = value;
+                this["AutoSizeMax"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
-        public string AutoSizeMax {
+        [global::System.Configuration.DefaultSettingValueAttribute("160, 120")]
+        public global::System.Drawing.Size AutoSizeMin {
             get {
-                return ((string)(this["AutoSizeMax"]));
+                return ((global::System.Drawing.Size)(this["AutoSizeMin"]));
             }
             set {
-                this["AutoSizeMax"] = value;
+                this["AutoSizeMin"] = value;
             }
         }
     }

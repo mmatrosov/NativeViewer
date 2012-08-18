@@ -3,6 +3,7 @@
 *.suo
 *.user
 *.aps
+*.ipch
 Debug/
 Release/
 obj/

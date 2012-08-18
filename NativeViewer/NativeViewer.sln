@@ -10,6 +10,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NativeViewerLauncher", "Nat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NativeViewerGUI", "NativeViewerGUI\NativeViewerGUI.csproj", "{BE043154-EFA8-459D-9266-C2D959152F9D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NativeViewerPackage", "NativeViewerPackage\NativeViewerPackage.csproj", "{86A94CB7-798F-46C4-B239-D1237C8E38A1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +60,18 @@ Global
 		{BE043154-EFA8-459D-9266-C2D959152F9D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{BE043154-EFA8-459D-9266-C2D959152F9D}.Release|Win32.ActiveCfg = Release|Any CPU
 		{BE043154-EFA8-459D-9266-C2D959152F9D}.Release|x86.ActiveCfg = Release|Any CPU
+		{86A94CB7-798F-46C4-B239-D1237C8E38A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86A94CB7-798F-46C4-B239-D1237C8E38A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86A94CB7-798F-46C4-B239-D1237C8E38A1}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{86A94CB7-798F-46C4-B239-D1237C8E38A1}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{86A94CB7-798F-46C4-B239-D1237C8E38A1}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{86A94CB7-798F-46C4-B239-D1237C8E38A1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{86A94CB7-798F-46C4-B239-D1237C8E38A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86A94CB7-798F-46C4-B239-D1237C8E38A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86A94CB7-798F-46C4-B239-D1237C8E38A1}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{86A94CB7-798F-46C4-B239-D1237C8E38A1}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{86A94CB7-798F-46C4-B239-D1237C8E38A1}.Release|Win32.ActiveCfg = Release|Any CPU
+		{86A94CB7-798F-46C4-B239-D1237C8E38A1}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

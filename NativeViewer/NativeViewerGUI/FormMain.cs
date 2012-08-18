@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using EnvDTE;
 
 namespace NativeViewerGUI
 {
@@ -48,6 +49,14 @@ namespace NativeViewerGUI
       // Initialize status bar
       toolStripStatusLabelSize.Text = String.Format("{0}x{1}", image.Width, image.Height);
       toolStripStatusLabelDepth.Text = image.Tag as String;
+
+      // Access properties
+      DTE env = System.Runtime.InteropServices.Marshal.GetActiveObject("VisualStudio.DTE.10.0") as DTE;
+
+      EnvDTE.Properties props =
+          env.Properties["Environment", "General"];
+
+//      int n = props.Item("OptionInteger").Value;
     }
 
     [System.Runtime.InteropServices.DllImport("user32.dll")]

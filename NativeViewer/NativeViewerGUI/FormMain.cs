@@ -8,15 +8,18 @@ using System.Text;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using EnvDTE;
 
 namespace NativeViewerGUI
 {
   public partial class FormMain : Form
   {
+    private Settings _settings;
+
     public FormMain(Image image)
     {
       InitializeComponent();
+
+      _settings = Settings.Load();
 
       // Set thumbnail image
       pictureBoxThumbnail.Image = image;
@@ -40,8 +43,8 @@ namespace NativeViewerGUI
 
       // Adjust the initial window size to fit the image size. However, window size is 
       // restricted at this point, for it should not be accidentally made too big or too small.
-      MinimumSize = Properties.Settings.Default.AutoSizeMin;
-      MaximumSize = Properties.Settings.Default.AutoSizeMax;
+      MinimumSize = _settings.AutoSizeMin;
+      MaximumSize = _settings.AutoSizeMax;
       ClientSize = image.Size + (ClientSize - pictureBoxThumbnail.Size);
       MinimumSize = new Size();
       MaximumSize = new Size();
@@ -49,14 +52,6 @@ namespace NativeViewerGUI
       // Initialize status bar
       toolStripStatusLabelSize.Text = String.Format("{0}x{1}", image.Width, image.Height);
       toolStripStatusLabelDepth.Text = image.Tag as String;
-
-      // Access properties
-      DTE env = System.Runtime.InteropServices.Marshal.GetActiveObject("VisualStudio.DTE.10.0") as DTE;
-
-      EnvDTE.Properties props =
-          env.Properties["Environment", "General"];
-
-//      int n = props.Item("OptionInteger").Value;
     }
 
     [System.Runtime.InteropServices.DllImport("user32.dll")]
@@ -83,11 +78,11 @@ namespace NativeViewerGUI
 
       if (zoom > 1)
       {
-        pictureBoxThumbnail.Interpolation = Properties.Settings.Default.InterpModeStretch;
+        pictureBoxThumbnail.Interpolation = _settings.InterpModeStretch;
       }
       else
       {
-        pictureBoxThumbnail.Interpolation = Properties.Settings.Default.InterpModeShrink;
+        pictureBoxThumbnail.Interpolation = _settings.InterpModeShrink;
       }
     }
 

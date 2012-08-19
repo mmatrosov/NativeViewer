@@ -1,0 +1,10 @@
+﻿NativeViewer by Mikhail Matrosov
+
+==== VSIX version 0.9 / 19.08.2012 ====
+
+[+] First publicly available version
+[+] Support for Visual Studio 2010 
+[+] Support for CV_8UC1 and CV_8UC3 types
+[+] Watches string formatting
+[+] Dispalying thumbnail images
+[+] Manual integraion with autoexp.dat using options page

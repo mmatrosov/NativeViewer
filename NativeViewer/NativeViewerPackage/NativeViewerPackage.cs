@@ -28,8 +28,10 @@ namespace NativeViewerPackage
   // in the Help/About dialog of Visual Studio.
   [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)]
   [Guid(GuidList.guidNativeViewerPackagePkgString)]
-  [ProvideOptionPage(typeof(OptionsPage),
+  [ProvideOptionPage(typeof(OptionsPageGeneral),
     "NativeViewer", "General", 0, 0, true)]
+  [ProvideOptionPage(typeof(OptionsPageIntegration),
+    "NativeViewer", "Integration", 0, 0, true)]
   public sealed class NativeViewerPackage : Package
   {
     /// <summary>

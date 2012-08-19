@@ -34,18 +34,21 @@ namespace NativeViewerGUI
     public static Settings Load()
     {
       XmlSerializer deserializer = new XmlSerializer(typeof(Settings));
-      TextReader textReader = new StreamReader(FilePath);
-      Settings settings = deserializer.Deserialize(textReader) as Settings;
-      textReader.Close();
-      return settings;
+      
+      using (TextReader textReader = new StreamReader(FilePath))
+      {
+        return deserializer.Deserialize(textReader) as Settings;
+      }
     }
 
     public static void Save(Settings settings)
     {
       XmlSerializer serializer = new XmlSerializer(typeof(Settings));
-      TextWriter textWriter = new StreamWriter(FilePath);
-      serializer.Serialize(textWriter, settings);
-      textWriter.Close();
+      
+      using (TextWriter textWriter = new StreamWriter(FilePath))
+      {
+        serializer.Serialize(textWriter, settings);
+      }
     }
   }
 }

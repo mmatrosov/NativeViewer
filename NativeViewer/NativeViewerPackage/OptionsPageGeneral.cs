@@ -15,28 +15,28 @@ namespace NativeViewerPackage
 {
   [ClassInterface(ClassInterfaceType.AutoDual)]
   [CLSCompliant(false), ComVisible(true)]
-  public class OptionsPage : DialogPage
+  public class OptionsPageGeneral : DialogPage
   {
     [DefaultValue(InterpolationMode.NearestNeighbor)]
-    [Category("Appearance")]
+    [Category("Behavior")]
     [DisplayName("Image stretch interpolation")]
     [Description("Interpolation mode used for stretching thumbnail image")]
     public virtual InterpolationMode InterpModeStretch { get; set; }
 
     [DefaultValue(InterpolationMode.HighQualityBilinear)]
-    [Category("Appearance")]
+    [Category("Behavior")]
     [DisplayName("Image shrink interpolation")]
     [Description("Interpolation mode used for shrinking thumbnail image")]
     public virtual InterpolationMode InterpModeShrink { get; set; }
 
     [DefaultValue(typeof(Size), "640, 480")]
-    [Category("Appearance")]
+    [Category("Layout")]
     [DisplayName("Image maximum auto size")]
     [Description("Maximum size of the thumbnail image at the moment it is shown")]
     public virtual Size AutoSizeMax { get; set; }
 
     [DefaultValue(typeof(Size), "160, 120")]
-    [Category("Appearance")]
+    [Category("Layout")]
     [DisplayName("Image minimum auto size")]
     [Description("Minimum size of the thumbnail image at the moment it is shown")]
     public virtual Size AutoSizeMin { get; set; }

@@ -21,6 +21,12 @@ namespace NativeViewerGUI
 
       _settings = Settings.Load();
 
+      InitializeContent(image);
+      InitializeLayout();
+    }
+
+    private void InitializeContent(Image image)
+    {
       // Set thumbnail image
       pictureBoxThumbnail.Image = image;
 
@@ -29,13 +35,20 @@ namespace NativeViewerGUI
         // The only grayscale format available for GDI+ is indexed, and 
         // the default palette needs to be overridden for proper display
         ColorPalette palette = image.Palette;
-        
+
         Color[] entries = palette.Entries;
         for (int i = 0; i < 256; ++i) entries[i] = Color.FromArgb(i, i, i);
 
         image.Palette = palette;
       }
 
+      // Initialize status bar
+      toolStripStatusLabelSize.Text = String.Format("{0}x{1}", image.Width, image.Height);
+      toolStripStatusLabelDepth.Text = image.Tag as String;
+    }
+
+    private void InitializeLayout()
+    {
       // Adjust window position relative to cursor position
       Point p = System.Windows.Forms.Cursor.Position;
       p.Offset(Location - new Size(PointToScreen(new Point(2, 2))));
@@ -43,15 +56,23 @@ namespace NativeViewerGUI
 
       // Adjust the initial window size to fit the image size. However, window size is 
       // restricted at this point, for it should not be accidentally made too big or too small.
-      MinimumSize = _settings.AutoSizeMin;
-      MaximumSize = _settings.AutoSizeMax;
-      ClientSize = image.Size + (ClientSize - pictureBoxThumbnail.Size);
-      MinimumSize = new Size();
-      MaximumSize = new Size();
+      Size min_size = _settings.AutoSizeMin;
+      Size max_size = _settings.AutoSizeMax;
 
-      // Initialize status bar
-      toolStripStatusLabelSize.Text = String.Format("{0}x{1}", image.Width, image.Height);
-      toolStripStatusLabelDepth.Text = image.Tag as String;
+      Func<Size, Size> ConstrainSize = (Size s) => new Size(
+        Math.Max(Math.Min(s.Width, max_size.Width), min_size.Width),
+        Math.Max(Math.Min(s.Height, max_size.Height), min_size.Height));
+
+      Size size = pictureBoxThumbnail.Image.Size;
+      Size constrained_size = ConstrainSize(size);
+      double ratio = Math.Min(
+        1.0 * constrained_size.Width / size.Width, 
+        1.0 * constrained_size.Height / size.Height);
+      Size scaled_size = new Size(
+        Convert.ToInt32(size.Width * ratio), Convert.ToInt32(size.Height * ratio));
+      Size new_size = ConstrainSize(scaled_size);
+
+      ClientSize = new_size + (ClientSize - pictureBoxThumbnail.Size);
     }
 
     [System.Runtime.InteropServices.DllImport("user32.dll")]

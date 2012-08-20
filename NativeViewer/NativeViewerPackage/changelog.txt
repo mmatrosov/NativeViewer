@@ -1,5 +1,9 @@
 ﻿NativeViewer by Mikhail Matrosov
 
+==== VSIX version 0.10 / 20.08.2012 ====
+
+[-] Removed unnecessary dependency from opencv_core241.dll
+
 ==== VSIX version 0.9 / 19.08.2012 ====
 
 [+] First publicly available version

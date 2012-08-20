@@ -6,11 +6,12 @@
 
 #include <Windows.h>
 
-#include <opencv2/core/core.hpp>
+#include <opencv2/core/types_c.h>
 
 #include <vector>
 #include <stdexcept>
 #include <algorithm>
 #include <iomanip>
+#include <sstream>
 
 #include <msclr/marshal_cppstd.h>

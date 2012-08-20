@@ -161,9 +161,6 @@
     <Content Include="changelog.txt">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="opencv_core241.dll">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Content Include="res\icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -181,9 +178,6 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Resources\Package.ico" />
-    <Content Include="tbb.dll">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NativeViewerGUI\NativeViewerGUI.csproj">

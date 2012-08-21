@@ -1,6 +1,9 @@
 ﻿NativeViewer by Mikhail Matrosov
 
 [+] Initial size of the thumbnail window is chosen more carefully to minimize margins area
+[+] User input in options page is validated
+[+] Added "Outdated" integration status indicating package installation path has changed
+[=] VSIX preview image changed
 
 ==== VSIX version 0.10 / 20.08.2012 ====
 

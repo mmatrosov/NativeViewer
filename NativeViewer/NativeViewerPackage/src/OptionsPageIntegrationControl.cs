@@ -17,7 +17,7 @@ namespace NativeViewerPackage
   {
     public enum TStatus
     {
-      Unknown, Integrated, NotIntegrated, Conflicted
+      Unknown, Integrated, NotIntegrated, Outdated, Conflicted
     }
 
     readonly string AutoExpFilePath;
@@ -37,7 +37,7 @@ namespace NativeViewerPackage
     readonly string AutoExpEntry;
 
     readonly Color[] StatusColors = new Color[] 
-      { Color.Black, Color.Green, Color.Olive, Color.Red };
+      { Color.Black, Color.Green, Color.Olive, Color.Olive, Color.Red };
 
     internal OptionsPageIntegration _page;
 
@@ -54,7 +54,7 @@ namespace NativeViewerPackage
         _status = value;
         
         ButtonAddEntry.Enabled = value == TStatus.NotIntegrated;
-        ButtonRemoveEntry.Enabled = value == TStatus.Integrated;
+        ButtonRemoveEntry.Enabled = value == TStatus.Integrated || value == TStatus.Outdated;
 
         LabelStatus.Text = value.ToString();
         LabelStatus.ForeColor = StatusColors[(int)value];
@@ -106,8 +106,10 @@ namespace NativeViewerPackage
           if (buf.Count < buf_len) continue;
           if (buf.Count > buf_len) buf.RemoveAt(0);
 
+          string entry = buf[prefix_len];
+
           // Check whether the entry is matched against the mask
-          if (!AutoExpEntryMask.IsMatch(buf[prefix_len])) continue;
+          if (!AutoExpEntryMask.IsMatch(entry)) continue;
 
           bool buf_matches_context =
             Enumerable.SequenceEqual(buf.GetRange(0, prefix_len), AutoExpEntryPrefix) &&
@@ -115,7 +117,14 @@ namespace NativeViewerPackage
 
           if (buf_matches_context)
           {
-            Status = TStatus.Integrated;
+            if (entry == AutoExpEntry)
+            {
+              Status = TStatus.Integrated;
+            }
+            else
+            {
+              Status = TStatus.Outdated;
+            }
           }
           else
           {
@@ -195,11 +204,6 @@ namespace NativeViewerPackage
         }
       }
 
-      MessageBox.Show(
-        "Integration was successfully reverted. " +
-        "NativeViewer functionality is now disabled.",
-        "NativeViewer", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
       Status = TStatus.NotIntegrated;      
     }
 
@@ -238,7 +242,15 @@ namespace NativeViewerPackage
             Enumerable.SequenceEqual(suffix_buf, AutoExpEntrySuffix);
         }
 
-        rechecked_status = buf_matches_context ? TStatus.Integrated : TStatus.Conflicted;
+        if (buf_matches_context)
+        {
+          rechecked_status = 
+            (lines[i] == AutoExpEntry) ? TStatus.Integrated : TStatus.Outdated;
+        }
+        else
+        {
+          rechecked_status = TStatus.Conflicted;
+        }
       }
 
       if (rechecked_status != Status)

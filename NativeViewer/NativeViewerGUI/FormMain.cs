@@ -59,6 +59,11 @@ namespace NativeViewerGUI
       Size min_size = _settings.AutoSizeMin;
       Size max_size = _settings.AutoSizeMax;
 
+      if (max_size.Width == 0 || max_size.Height == 0)
+      {
+        max_size = new Size(int.MaxValue, int.MaxValue);
+      }
+
       Func<Size, Size> ConstrainSize = (Size s) => new Size(
         Math.Max(Math.Min(s.Width, max_size.Width), min_size.Width),
         Math.Max(Math.Min(s.Height, max_size.Height), min_size.Height));

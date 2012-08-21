@@ -17,29 +17,114 @@ namespace NativeViewerPackage
   [CLSCompliant(false), ComVisible(true)]
   public class OptionsPageGeneral : DialogPage
   {
+    private InterpolationMode _interp_mode_shrink;
+    private InterpolationMode _interp_mode_stretch;
+    private Size _auto_size_max;
+    private Size _auto_size_min;
+
     [DefaultValue(InterpolationMode.NearestNeighbor)]
     [Category("Behavior")]
     [DisplayName("Image stretch interpolation")]
     [Description("Interpolation mode used for stretching thumbnail image")]
-    public virtual InterpolationMode InterpModeStretch { get; set; }
+    public InterpolationMode InterpModeStretch 
+    { 
+      get 
+      {
+        return _interp_mode_stretch;
+      }
+      set 
+      {
+        if (value == InterpolationMode.Invalid)
+        {
+          value = InterpolationMode.Default;
+        }
+        _interp_mode_stretch = value;
+      } 
+    }
 
     [DefaultValue(InterpolationMode.HighQualityBilinear)]
     [Category("Behavior")]
     [DisplayName("Image shrink interpolation")]
     [Description("Interpolation mode used for shrinking thumbnail image")]
-    public virtual InterpolationMode InterpModeShrink { get; set; }
+    public InterpolationMode InterpModeShrink
+    {
+      get
+      {
+        return _interp_mode_shrink;
+      }
+      set
+      {
+        if (value == InterpolationMode.Invalid)
+        {
+          value = InterpolationMode.Default;
+        }
+        _interp_mode_shrink = value;
+      }
+    }
 
     [DefaultValue(typeof(Size), "640, 480")]
     [Category("Layout")]
-    [DisplayName("Image maximum auto size")]
-    [Description("Maximum size of the thumbnail image at the moment it is shown")]
-    public virtual Size AutoSizeMax { get; set; }
+    [DisplayName("Image maximum initial size")]
+    [Description("Maximum size of the thumbnail image at the moment it is shown. Set to [0; 0] to disable constraint.")]
+    public Size AutoSizeMax
+    {
+      get
+      {
+        return _auto_size_max;
+      }
+      set
+      {
+        if (value.Width <= 0 && value.Height <= 0)
+        {
+          value.Width = 0;
+          value.Height = 0;
+        }
+        else
+        {
+          value.Width = Math.Max(1, value.Width);
+          value.Height = Math.Max(1, value.Height);
+
+          if (AutoSizeMin.Width > 0 && AutoSizeMin.Height > 0)
+          {
+            value.Width = Math.Max(value.Width, AutoSizeMin.Width);
+            value.Height = Math.Max(value.Height, AutoSizeMin.Height);
+          }
+        }
+        _auto_size_max = value;
+      }
+    }
 
     [DefaultValue(typeof(Size), "160, 120")]
     [Category("Layout")]
-    [DisplayName("Image minimum auto size")]
-    [Description("Minimum size of the thumbnail image at the moment it is shown")]
-    public virtual Size AutoSizeMin { get; set; }
+    [DisplayName("Image minimum initial size")]
+    [Description("Minimum size of the thumbnail image at the moment it is shown. Set to [0; 0] to disable constraint.")]
+    public Size AutoSizeMin
+    {
+      get
+      {
+        return _auto_size_min;
+      }
+      set
+      {
+        if (value.Width <= 0 && value.Height <= 0)
+        {
+          value.Width = 0;
+          value.Height = 0;
+        }
+        else
+        {
+          value.Width = Math.Max(1, value.Width);
+          value.Height = Math.Max(1, value.Height);
+
+          if (AutoSizeMax.Width > 0 && AutoSizeMax.Height > 0)
+          {
+            value.Width = Math.Min(value.Width, AutoSizeMax.Width);
+            value.Height = Math.Min(value.Height, AutoSizeMax.Height);
+          }
+        }
+        _auto_size_min = value;
+      }
+    }
 
     public override void SaveSettingsToStorage()
     {

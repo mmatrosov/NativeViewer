@@ -118,10 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="textBoxHelp.Text" xml:space="preserve">
-    <value>In order to work correctly, NativeViewer must be integrated into Visual Studio debugger by adding an entry into the autoexp.dat file. This operation must be done only once. 
+    <value>In order to work correctly, NativeViewer must be integrated into Visual Studio debugger by adding an entry into the autoexp.dat file. This operation must be done only once, but should be repeat if you install a newer version of the package.
 
 Press the "Check integration" button to examine the autoexp.dat file's content. Then press "Add entry" button to add an entry to the autoexp.dat file. Status should change to "Integrated". At this point NativeViewer is ready to use, no restart of Visual Studio is required.
 
-Press the "Remove entry" button to revert changes in the autoexp.dat file. Status should change to "NotIntegrated".</value>
+If you install a newer version of NativeViewer, Visual Studio may change package installation path. In this case status will be shown as "Outdated". Use the "Remove entry" button in this situation and then act as in the previous case.
+
+The "Remove entry" button is used to revert changes in the autoexp.dat file. It will change status to "NotIntegrated". </value>
   </data>
 </root>

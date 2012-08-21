@@ -100,7 +100,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxHelp.BorderStyle = System.Windows.Forms.BorderStyle.None;
-      this.textBoxHelp.Location = new System.Drawing.Point(7, 82);
+      this.textBoxHelp.Location = new System.Drawing.Point(7, 74);
       this.textBoxHelp.Multiline = true;
       this.textBoxHelp.Name = "textBoxHelp";
       this.textBoxHelp.ReadOnly = true;

@@ -9,6 +9,8 @@ int _tmain(int argc, _TCHAR* argv[])
   {
     cv::Mat img = cv::imread("../../data/opencv-logo-white.png", -1);
 
+    cv::Mat gray = cv::imread("../../data/parrot.jpg", -1);
+
     uchar rgb_data[] = { 
       255, 0, 0, 
       0, 255, 0, 

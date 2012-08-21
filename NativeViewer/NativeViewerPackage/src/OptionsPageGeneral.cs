@@ -126,6 +126,11 @@ namespace NativeViewerPackage
       }
     }
 
+    [Category("Format")]
+    [DisplayName("Colored images format")]
+    [Description("Determines how to count channels in colored images")]
+    public NativeViewerGUI.Settings.TImageFormat ImageFormat { get; set; }
+
     public override void SaveSettingsToStorage()
     {
       NativeViewerGUI.Settings settings = new NativeViewerGUI.Settings();

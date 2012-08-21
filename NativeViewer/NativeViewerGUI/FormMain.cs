@@ -45,6 +45,8 @@ namespace NativeViewerGUI
       // Initialize status bar
       toolStripStatusLabelSize.Text = String.Format("{0}x{1}", image.Width, image.Height);
       toolStripStatusLabelDepth.Text = image.Tag as String;
+      toolStripStatusLabelFormat.Text = image.PixelFormat == 
+        PixelFormat.Format8bppIndexed ? "" : _settings.ImageFormat.ToString();
     }
 
     private void InitializeLayout()

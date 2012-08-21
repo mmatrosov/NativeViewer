@@ -35,6 +35,7 @@
       this.toolStripStatusLabelZoom = new System.Windows.Forms.ToolStripStatusLabel();
       this.timerCheckBounds = new System.Windows.Forms.Timer(this.components);
       this.pictureBoxThumbnail = new NativeViewerGUI.MyPictureBox();
+      this.toolStripStatusLabelFormat = new System.Windows.Forms.ToolStripStatusLabel();
       this.statusStripMain.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxThumbnail)).BeginInit();
       this.SuspendLayout();
@@ -44,7 +45,8 @@
       this.statusStripMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabelSize,
             this.toolStripStatusLabelDepth,
-            this.toolStripStatusLabelZoom});
+            this.toolStripStatusLabelZoom,
+            this.toolStripStatusLabelFormat});
       this.statusStripMain.Location = new System.Drawing.Point(0, 184);
       this.statusStripMain.Name = "statusStripMain";
       this.statusStripMain.Size = new System.Drawing.Size(304, 22);
@@ -85,6 +87,12 @@
       this.pictureBoxThumbnail.TabStop = false;
       this.pictureBoxThumbnail.SizeChanged += new System.EventHandler(this.pictureBoxThumbnail_SizeChanged);
       // 
+      // toolStripStatusLabelFormat
+      // 
+      this.toolStripStatusLabelFormat.Name = "toolStripStatusLabelFormat";
+      this.toolStripStatusLabelFormat.Size = new System.Drawing.Size(29, 17);
+      this.toolStripStatusLabelFormat.Text = "BGR";
+      // 
       // FormMain
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -114,5 +122,6 @@
     private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelZoom;
     private NativeViewerGUI.MyPictureBox pictureBoxThumbnail;
     private System.Windows.Forms.Timer timerCheckBounds;
+    private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelFormat;
   }
 }

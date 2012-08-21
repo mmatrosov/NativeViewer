@@ -10,4 +10,5 @@
     <Width>160</Width>
     <Height>120</Height>
   </AutoSizeMin>
+  <ImageFormat>BGR</ImageFormat>
 </Settings>

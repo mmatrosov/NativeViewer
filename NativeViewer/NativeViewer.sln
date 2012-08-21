@@ -9,6 +9,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NativeViewerLauncher", "Nat
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NativeViewerGUI", "NativeViewerGUI\NativeViewerGUI.csproj", "{BE043154-EFA8-459D-9266-C2D959152F9D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E9F1C3A6-7A43-4FD5-B3F7-DF63F2F24941} = {E9F1C3A6-7A43-4FD5-B3F7-DF63F2F24941}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NativeViewerPackage", "NativeViewerPackage\NativeViewerPackage.csproj", "{86A94CB7-798F-46C4-B239-D1237C8E38A1}"
 EndProject

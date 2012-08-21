@@ -1,5 +1,3 @@
-// This is the main DLL file.
-
 #include "stdafx.h"
 
 #include "custview.h"
@@ -19,6 +17,11 @@ public:
   DWORDLONG pdata;
   std::vector<int> size;
   std::vector<__int64> step;
+};
+
+enum ImageFormat
+{
+  ifRGB, ifBGR
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -164,9 +167,14 @@ void FormatResult(const CvMatHeader& header, int base, char *pResult, size_t max
 
 //////////////////////////////////////////////////////////////////////////
 ///
-void ReadImageAligned(DEBUGHELPER *pHelper, 
-  const CvMatHeader& header, std::vector<unsigned char>& dst, int& dst_step)
+void ReadImageAligned(DEBUGHELPER *pHelper, const CvMatHeader& header, 
+  ImageFormat format, std::vector<unsigned char>& dst, int& dst_step)
 {
+  struct Color
+  {
+    unsigned char r, g, b;
+  };
+
   const int height = header.rows;
   const int src_step = static_cast<int>(header.step[0]);
   const int line_size = static_cast<int>(header.cols * header.step[1]);
@@ -182,6 +190,20 @@ void ReadImageAligned(DEBUGHELPER *pHelper,
   for (int i = 0; i < height; ++i)
   {
     ReadDebuggeeMemoryChecked(pHelper, pSrc, line_size, pDst);
+
+    // Internal .NET Bitmap format is BGR, so conversion is only needed for RGB
+    if (format == ifRGB && CV_MAT_CN(header.flags) == 3)
+    {
+      // I don't want to include OpenCV at this point, so the raw loop is used 
+      // instead of cv::cvtColor()
+      Color* pBegin = reinterpret_cast<Color*>(pDst);  
+      Color* pEnd = pBegin + header.cols;
+      for (Color* pPixel = pBegin; pPixel != pEnd; ++pPixel)
+      {
+        std::swap(pPixel->r, pPixel->b);        
+      }
+    }
+
     pSrc += src_step;
     pDst += dst_step;
   }
@@ -192,6 +214,27 @@ void ReadImageAligned(DEBUGHELPER *pHelper,
 //////////////////////////////////////////////////////////////////////////
 
 #pragma managed
+
+//////////////////////////////////////////////////////////////////////////
+///
+ImageFormat LoadImageFormat(System::Reflection::Assembly^ GUI)
+{
+  using namespace System;
+  using namespace System::Reflection;
+
+  Type^ Settings = GUI->GetType("NativeViewerGUI.Settings");
+  MethodInfo^ LoadSettings = Settings->GetMethod("Load", gcnew array<Type^>{});
+  Object^ settings = LoadSettings->Invoke(nullptr, gcnew array<Object^>{});
+
+  PropertyInfo^ ImageFormat = Settings->GetProperty("ImageFormat");
+  Object^ format = ImageFormat->GetValue(settings, nullptr);
+  
+  // It's not really safe to cast enum directly to int, since the order of the values 
+  // can be accidentally changed. However, Assembly::GetType method doesn't work for 
+  // nested types, and I don't want to make code unnecessary complicated by parsing 
+  // types collection returned by Assembly::GetTypes to access nested enum.
+  return (int)format == 0 ? ifRGB : ifBGR;
+}
 
 //////////////////////////////////////////////////////////////////////////
 ///
@@ -227,17 +270,20 @@ void ShowThumbnail(DEBUGHELPER *pHelper, const CvMatHeader& header)
       Assembly^ GUI = Assembly::LoadFrom(path + "NativeViewerGUI.dll");
       Type^ FormMain = GUI->GetType("NativeViewerGUI.FormMain");
       MethodInfo^ ShowDialog = FormMain->GetMethod("ShowDialog", gcnew array<Type^>{});
-      
+
+      // Retrieve format settings
+      ImageFormat format = LoadImageFormat(GUI);
+
       // Read image contents from debuggee memory
       int step;
       std::vector<unsigned char> img;
-      ReadImageAligned(pHelper, header, img, step);
+      ReadImageAligned(pHelper, header, format, img, step);
 
       // Initialize .NET image wrapper
-      Imaging::PixelFormat format = cn == 1 ? 
+      Imaging::PixelFormat pixel_format = cn == 1 ? 
         Imaging::PixelFormat::Format8bppIndexed : Imaging::PixelFormat::Format24bppRgb;
       Bitmap^ bmp = gcnew Bitmap(
-        header.cols, header.rows, static_cast<int>(step), format, IntPtr(&img[0]));
+        header.cols, header.rows, static_cast<int>(step), pixel_format, IntPtr(&img[0]));
 
       // Pass information on underlying image format
       bmp->Tag = gcnew String(FlagsToString(header.flags).c_str());

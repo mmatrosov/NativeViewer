@@ -1,8 +1,11 @@
 ﻿NativeViewer by Mikhail Matrosov
 
+==== VSIX version 0.11 / 22.08.2012 ====
+
+[+] Added option to switch between BGR and RGB image formats
 [+] Initial size of the thumbnail window is chosen more carefully to minimize margins area
 [+] User input in options page is validated
-[+] Added "Outdated" integration status indicating package installation path has changed
+[-] Added "Outdated" integration status indicating package installation path has changed
 [=] VSIX preview image changed
 
 ==== VSIX version 0.10 / 20.08.2012 ====

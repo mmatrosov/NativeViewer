@@ -80,6 +80,37 @@ namespace NativeViewerPackage
       AutoExpEntry = "cv::Mat=$ADDIN(" + dll_path + ",CvMatViewer)";
     }
 
+    // According to this, there can be set no global exception handler within the current package
+    // http://social.msdn.microsoft.com/Forums/en-US/vsx/thread/2ab45296-de56-49ae-a81a-a2395811df4c
+    //
+    // So this function is used as a generic entry point for the current class and 
+    // handles exceptions which can be thrown in this class
+    private void ButtonClickProxy(object sender, EventArgs e)
+    {
+      try
+      {
+        if (sender == ButtonCheckStatus)
+        {
+          ButtonCheckStatus_Click(sender, e);
+        }
+        else if (sender == ButtonAddEntry)
+        {
+          ButtonAddEntry_Click(sender, e);
+        }
+        else if (sender == ButtonRemoveEntry)
+        {
+          ButtonRemoveEntry_Click(sender, e);
+        }
+      }
+      catch (IOException ex)
+      {
+        MessageBox.Show(
+          ex.Message + " Make sure you are running Visual Studio with Administrator privileges.",
+          "NativeViewer", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        Status = TStatus.Unknown;
+      }
+    }
+
     private void ButtonCheckStatus_Click(object sender, EventArgs e)
     {
       int prefix_len = AutoExpEntryPrefix.Length;
@@ -117,14 +148,7 @@ namespace NativeViewerPackage
 
           if (buf_matches_context)
           {
-            if (entry == AutoExpEntry)
-            {
-              Status = TStatus.Integrated;
-            }
-            else
-            {
-              Status = TStatus.Outdated;
-            }
+            Status = entry == AutoExpEntry ? TStatus.Integrated : TStatus.Outdated;
           }
           else
           {
@@ -140,10 +164,10 @@ namespace NativeViewerPackage
           // At this point decision is made
           return;
         }
-
-        // No line found which matches against the mask
-        Status = TStatus.NotIntegrated;
       }
+
+      // No line found which matches against the mask
+      Status = TStatus.NotIntegrated;
     }
 
     private void ButtonAddEntry_Click(object sender, EventArgs e)

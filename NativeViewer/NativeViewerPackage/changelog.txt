@@ -1,5 +1,7 @@
 ﻿NativeViewer by Mikhail Matrosov
 
+[-] Fixed bug with VS crash during NativeViewer integration when run not under admin
+
 ==== VSIX version 0.11 / 22.08.2012 ====
 
 [+] Added option to switch between BGR and RGB image formats

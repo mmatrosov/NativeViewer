@@ -10,6 +10,7 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Reflection;
 using System.Xml.Serialization;
+using System.Windows.Forms;
 
 namespace NativeViewerPackage
 {
@@ -146,12 +147,31 @@ namespace NativeViewerPackage
         settings_prop.SetValue(settings, value, null);
       }
 
-      NativeViewerGUI.Settings.Save(settings);
+      try
+      {
+        NativeViewerGUI.Settings.Save(settings);
+      }
+      catch (IOException ex)
+      {
+        MessageBox.Show("Cannot save settings! " + ex.Message, 
+          "NativeViewer", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      }
     }
 
     public override void LoadSettingsFromStorage()
     {
-      NativeViewerGUI.Settings settings = NativeViewerGUI.Settings.Load();
+      NativeViewerGUI.Settings settings;
+
+      try
+      {
+        settings = NativeViewerGUI.Settings.Load();
+      }
+      catch (IOException ex)
+      {
+        MessageBox.Show("Cannot load settings! " + ex.Message,
+          "NativeViewer", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        return;
+      }
 
       Type settings_t = settings.GetType();
       Type options_t = this.GetType();

@@ -33,10 +33,18 @@
       this.toolStripStatusLabelSize = new System.Windows.Forms.ToolStripStatusLabel();
       this.toolStripStatusLabelDepth = new System.Windows.Forms.ToolStripStatusLabel();
       this.toolStripStatusLabelZoom = new System.Windows.Forms.ToolStripStatusLabel();
-      this.timerCheckBounds = new System.Windows.Forms.Timer(this.components);
-      this.pictureBoxThumbnail = new NativeViewerGUI.MyPictureBox();
       this.toolStripStatusLabelFormat = new System.Windows.Forms.ToolStripStatusLabel();
+      this.timerCheckBounds = new System.Windows.Forms.Timer(this.components);
+      this.contextMenuStripThumbnail = new System.Windows.Forms.ContextMenuStrip(this.components);
+      this.toolStripMenuItemZoom = new System.Windows.Forms.ToolStripMenuItem();
+      this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+      this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+      this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
+      this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
+      this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripMenuItem();
+      this.pictureBoxThumbnail = new NativeViewerGUI.MyPictureBox();
       this.statusStripMain.SuspendLayout();
+      this.contextMenuStripThumbnail.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxThumbnail)).BeginInit();
       this.SuspendLayout();
       // 
@@ -71,13 +79,84 @@
       this.toolStripStatusLabelZoom.Size = new System.Drawing.Size(35, 17);
       this.toolStripStatusLabelZoom.Text = "800%";
       // 
+      // toolStripStatusLabelFormat
+      // 
+      this.toolStripStatusLabelFormat.Name = "toolStripStatusLabelFormat";
+      this.toolStripStatusLabelFormat.Size = new System.Drawing.Size(29, 17);
+      this.toolStripStatusLabelFormat.Text = "BGR";
+      // 
       // timerCheckBounds
       // 
       this.timerCheckBounds.Enabled = true;
       this.timerCheckBounds.Tick += new System.EventHandler(this.timerCheckBounds_Tick);
       // 
+      // contextMenuStripThumbnail
+      // 
+      this.contextMenuStripThumbnail.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItemZoom});
+      this.contextMenuStripThumbnail.Name = "contextMenuStripThumbnail";
+      this.contextMenuStripThumbnail.Size = new System.Drawing.Size(107, 26);
+      // 
+      // toolStripMenuItemZoom
+      // 
+      this.toolStripMenuItemZoom.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem1,
+            this.toolStripMenuItem2,
+            this.toolStripMenuItem3,
+            this.toolStripMenuItem4,
+            this.toolStripMenuItem5});
+      this.toolStripMenuItemZoom.Name = "toolStripMenuItemZoom";
+      this.toolStripMenuItemZoom.Size = new System.Drawing.Size(106, 22);
+      this.toolStripMenuItemZoom.Text = "Zoom";
+      // 
+      // toolStripMenuItem1
+      // 
+      this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+      this.toolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D1)));
+      this.toolStripMenuItem1.Size = new System.Drawing.Size(142, 22);
+      this.toolStripMenuItem1.Tag = "";
+      this.toolStripMenuItem1.Text = "25%";
+      this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItemZoom_Click);
+      // 
+      // toolStripMenuItem2
+      // 
+      this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+      this.toolStripMenuItem2.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D2)));
+      this.toolStripMenuItem2.Size = new System.Drawing.Size(142, 22);
+      this.toolStripMenuItem2.Tag = "";
+      this.toolStripMenuItem2.Text = "50%";
+      this.toolStripMenuItem2.Click += new System.EventHandler(this.toolStripMenuItemZoom_Click);
+      // 
+      // toolStripMenuItem3
+      // 
+      this.toolStripMenuItem3.Name = "toolStripMenuItem3";
+      this.toolStripMenuItem3.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D3)));
+      this.toolStripMenuItem3.Size = new System.Drawing.Size(142, 22);
+      this.toolStripMenuItem3.Tag = "";
+      this.toolStripMenuItem3.Text = "100%";
+      this.toolStripMenuItem3.Click += new System.EventHandler(this.toolStripMenuItemZoom_Click);
+      // 
+      // toolStripMenuItem4
+      // 
+      this.toolStripMenuItem4.Name = "toolStripMenuItem4";
+      this.toolStripMenuItem4.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D4)));
+      this.toolStripMenuItem4.Size = new System.Drawing.Size(142, 22);
+      this.toolStripMenuItem4.Tag = "";
+      this.toolStripMenuItem4.Text = "200%";
+      this.toolStripMenuItem4.Click += new System.EventHandler(this.toolStripMenuItemZoom_Click);
+      // 
+      // toolStripMenuItem5
+      // 
+      this.toolStripMenuItem5.Name = "toolStripMenuItem5";
+      this.toolStripMenuItem5.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D5)));
+      this.toolStripMenuItem5.Size = new System.Drawing.Size(142, 22);
+      this.toolStripMenuItem5.Tag = "";
+      this.toolStripMenuItem5.Text = "400%";
+      this.toolStripMenuItem5.Click += new System.EventHandler(this.toolStripMenuItemZoom_Click);
+      // 
       // pictureBoxThumbnail
       // 
+      this.pictureBoxThumbnail.ContextMenuStrip = this.contextMenuStripThumbnail;
       this.pictureBoxThumbnail.Dock = System.Windows.Forms.DockStyle.Fill;
       this.pictureBoxThumbnail.Location = new System.Drawing.Point(0, 0);
       this.pictureBoxThumbnail.Name = "pictureBoxThumbnail";
@@ -86,12 +165,6 @@
       this.pictureBoxThumbnail.TabIndex = 1;
       this.pictureBoxThumbnail.TabStop = false;
       this.pictureBoxThumbnail.SizeChanged += new System.EventHandler(this.pictureBoxThumbnail_SizeChanged);
-      // 
-      // toolStripStatusLabelFormat
-      // 
-      this.toolStripStatusLabelFormat.Name = "toolStripStatusLabelFormat";
-      this.toolStripStatusLabelFormat.Size = new System.Drawing.Size(29, 17);
-      this.toolStripStatusLabelFormat.Text = "BGR";
       // 
       // FormMain
       // 
@@ -108,6 +181,7 @@
       this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormMain_KeyDown);
       this.statusStripMain.ResumeLayout(false);
       this.statusStripMain.PerformLayout();
+      this.contextMenuStripThumbnail.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxThumbnail)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
@@ -123,5 +197,12 @@
     private NativeViewerGUI.MyPictureBox pictureBoxThumbnail;
     private System.Windows.Forms.Timer timerCheckBounds;
     private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelFormat;
+    private System.Windows.Forms.ContextMenuStrip contextMenuStripThumbnail;
+    private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemZoom;
+    private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+    private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
+    private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem3;
+    private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem4;
+    private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem5;
   }
 }

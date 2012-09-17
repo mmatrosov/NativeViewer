@@ -15,6 +15,20 @@ namespace NativeViewerGUI
   {
     private Settings _settings;
 
+    // Assign to this property to adjust window size so that size of the picture box
+    // is equal to the given
+    private Size pictureBoxThumbnailSize
+    {
+      get
+      {
+        return pictureBoxThumbnail.Size;
+      }
+      set
+      {
+        ClientSize = value + (ClientSize - pictureBoxThumbnail.Size);
+      }
+    }
+
     public FormMain(Image image)
     {
       InitializeComponent();
@@ -47,6 +61,18 @@ namespace NativeViewerGUI
       toolStripStatusLabelDepth.Text = image.Tag as String;
       toolStripStatusLabelFormat.Text = image.PixelFormat == 
         PixelFormat.Format8bppIndexed ? "" : _settings.ImageFormat.ToString();
+
+      // Maximum window size is restricted by the screen resolution. Here we try to set
+      // all possible zoom levels and see whether we succeeded. If not, a corresponding 
+      // menu item is disabled. No image redraw is done by the framework during this 
+      // process, only size manipulation.
+      foreach (ToolStripMenuItem item in toolStripMenuItemZoom.DropDownItems)
+      {
+        item.PerformClick();
+        Size actual = pictureBoxThumbnailSize;
+        Size target = GetZoomMenuItemAssociatedSize(item);
+        item.Enabled = actual == target;
+      }
     }
 
     private void InitializeLayout()
@@ -79,7 +105,19 @@ namespace NativeViewerGUI
         Convert.ToInt32(size.Width * ratio), Convert.ToInt32(size.Height * ratio));
       Size new_size = ConstrainSize(scaled_size);
 
-      ClientSize = new_size + (ClientSize - pictureBoxThumbnail.Size);
+      pictureBoxThumbnailSize = new_size;
+    }
+
+    private Size GetZoomMenuItemAssociatedSize(ToolStripMenuItem item)
+    {
+      // Text in zoom menu item is assumed to look like "25%" or "200%"
+      int percent_zoom = Convert.ToInt32(item.Text.Replace("%", ""));
+      double zoom = Convert.ToDouble(percent_zoom) / 100;
+
+      Size img_size = pictureBoxThumbnail.Image.Size;
+
+      return new Size(
+        Convert.ToInt32(img_size.Width * zoom), Convert.ToInt32(img_size.Height * zoom));
     }
 
     [System.Runtime.InteropServices.DllImport("user32.dll")]
@@ -96,11 +134,16 @@ namespace NativeViewerGUI
 
     private void pictureBoxThumbnail_SizeChanged(object sender, EventArgs e)
     {
-      SizeF PboxSize = pictureBoxThumbnail.Size;
-      SizeF ImgSize = pictureBoxThumbnail.Image.Size;
+      if (pictureBoxThumbnail.Image == null)
+      {
+        return;
+      }
+
+      SizeF pbox_size = pictureBoxThumbnail.Size;
+      SizeF img_size = pictureBoxThumbnail.Image.Size;
 
       double zoom = Math.Min(
-        PboxSize.Width / ImgSize.Width, PboxSize.Height / ImgSize.Height);
+        pbox_size.Width / img_size.Width, pbox_size.Height / img_size.Height);
 
       toolStripStatusLabelZoom.Text = (Math.Round(zoom * 100)).ToString() + "%";
 
@@ -120,6 +163,33 @@ namespace NativeViewerGUI
       {
         Close();
       }
+
+      // Context menu shortcuts are not automatically triggered when a menu is inactive,
+      // so here we manually check every item in a menu and click it, if shortcut is 
+      // equal to the key pressed.
+      Action<ToolStripMenuItem> check_shortcut = null;
+
+      check_shortcut = (node) =>
+      {
+        if (node.ShortcutKeys == e.KeyData)
+        {
+          node.PerformClick();
+        }
+        foreach (ToolStripMenuItem child in node.DropDownItems)
+        {
+          check_shortcut(child);
+        }
+      };
+
+      foreach (ToolStripMenuItem item in contextMenuStripThumbnail.Items)
+      {
+        check_shortcut(item);
+      }
+    }
+
+    private void toolStripMenuItemZoom_Click(object sender, EventArgs e)
+    {
+      pictureBoxThumbnailSize = GetZoomMenuItemAssociatedSize(sender as ToolStripMenuItem);
     }
   }
 }

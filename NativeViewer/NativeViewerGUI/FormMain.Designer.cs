@@ -34,7 +34,6 @@
       this.toolStripStatusLabelDepth = new System.Windows.Forms.ToolStripStatusLabel();
       this.toolStripStatusLabelZoom = new System.Windows.Forms.ToolStripStatusLabel();
       this.toolStripStatusLabelFormat = new System.Windows.Forms.ToolStripStatusLabel();
-      this.timerCheckBounds = new System.Windows.Forms.Timer(this.components);
       this.contextMenuStripThumbnail = new System.Windows.Forms.ContextMenuStrip(this.components);
       this.toolStripMenuItemZoom = new System.Windows.Forms.ToolStripMenuItem();
       this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -85,17 +84,14 @@
       this.toolStripStatusLabelFormat.Size = new System.Drawing.Size(29, 17);
       this.toolStripStatusLabelFormat.Text = "BGR";
       // 
-      // timerCheckBounds
-      // 
-      this.timerCheckBounds.Enabled = true;
-      this.timerCheckBounds.Tick += new System.EventHandler(this.timerCheckBounds_Tick);
-      // 
       // contextMenuStripThumbnail
       // 
       this.contextMenuStripThumbnail.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItemZoom});
       this.contextMenuStripThumbnail.Name = "contextMenuStripThumbnail";
-      this.contextMenuStripThumbnail.Size = new System.Drawing.Size(107, 26);
+      this.contextMenuStripThumbnail.Size = new System.Drawing.Size(153, 48);
+      this.contextMenuStripThumbnail.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.contextMenuStripThumbnail_Closed);
+      this.contextMenuStripThumbnail.Opened += new System.EventHandler(this.contextMenuStripThumbnail_Opened);
       // 
       // toolStripMenuItemZoom
       // 
@@ -106,7 +102,7 @@
             this.toolStripMenuItem4,
             this.toolStripMenuItem5});
       this.toolStripMenuItemZoom.Name = "toolStripMenuItemZoom";
-      this.toolStripMenuItemZoom.Size = new System.Drawing.Size(106, 22);
+      this.toolStripMenuItemZoom.Size = new System.Drawing.Size(152, 22);
       this.toolStripMenuItemZoom.Text = "Zoom";
       // 
       // toolStripMenuItem1
@@ -195,7 +191,6 @@
     private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelDepth;
     private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelZoom;
     private NativeViewerGUI.MyPictureBox pictureBoxThumbnail;
-    private System.Windows.Forms.Timer timerCheckBounds;
     private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelFormat;
     private System.Windows.Forms.ContextMenuStrip contextMenuStripThumbnail;
     private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemZoom;

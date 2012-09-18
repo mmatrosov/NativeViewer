@@ -15,6 +15,8 @@ namespace NativeViewerGUI
   {
     private Settings _settings;
 
+    private DialogDeactivator _deactivator;
+
     // Assign to this property to adjust window size so that size of the picture box
     // is equal to the given
     private Size pictureBoxThumbnailSize
@@ -34,6 +36,7 @@ namespace NativeViewerGUI
       InitializeComponent();
 
       _settings = Settings.Load();
+      _deactivator = new DialogDeactivator(this);
 
       InitializeContent(image);
       InitializeLayout();
@@ -120,18 +123,6 @@ namespace NativeViewerGUI
         Convert.ToInt32(img_size.Width * zoom), Convert.ToInt32(img_size.Height * zoom));
     }
 
-    [System.Runtime.InteropServices.DllImport("user32.dll")]
-    private static extern IntPtr GetForegroundWindow();
- 
-    private void timerCheckBounds_Tick(object sender, EventArgs e)
-    {
-      // Close window when mouse cursor leaves it or when it loses focus
-      if (!Bounds.Contains(Cursor.Position) || GetForegroundWindow() != Handle)
-      {
-        Close();
-      }
-    }
-
     private void pictureBoxThumbnail_SizeChanged(object sender, EventArgs e)
     {
       if (pictureBoxThumbnail.Image == null)
@@ -159,14 +150,9 @@ namespace NativeViewerGUI
 
     private void FormMain_KeyDown(object sender, KeyEventArgs e)
     {
-      if (e.KeyCode == Keys.Escape)
-      {
-        Close();
-      }
-
       // Context menu shortcuts are not automatically triggered when a menu is inactive,
-      // so here we manually check every item in a menu and click it, if shortcut is 
-      // equal to the key pressed.
+      // so here we manually check every item in a menu recursively and emulate click, if 
+      // its shortcut is equal to the key pressed.
       Action<ToolStripMenuItem> check_shortcut = null;
 
       check_shortcut = (node) =>
@@ -190,6 +176,20 @@ namespace NativeViewerGUI
     private void toolStripMenuItemZoom_Click(object sender, EventArgs e)
     {
       pictureBoxThumbnailSize = GetZoomMenuItemAssociatedSize(sender as ToolStripMenuItem);
+    }
+
+    private void contextMenuStripThumbnail_Opened(object sender, EventArgs e)
+    {
+      // Window should not be automatically closed when the context menu is shown
+      _deactivator.Disable();
+    }
+
+    private void contextMenuStripThumbnail_Closed(object sender, ToolStripDropDownClosedEventArgs e)
+    {
+      // Prior to enabling the window deactivation logic, make sure window will not be 
+      // closed at the moment an item is clicked in the context menu
+      _deactivator.UpdateAllowedRectBasedOnCursorPosition();
+      _deactivator.Enable();
     }
   }
 }

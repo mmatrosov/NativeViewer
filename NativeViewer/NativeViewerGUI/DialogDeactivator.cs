@@ -23,7 +23,8 @@ namespace NativeViewerGUI
 
       _form = form;
       _form.FormClosed += form_FormClosed;
-      _form.SizeChanged += form_SizeChanged;
+      _form.SizeChanged += form_LayoutChanged;
+      _form.LocationChanged += form_LayoutChanged;
       _form.KeyDown += form_KeyDown;
 
       _timer = new Timer();
@@ -89,12 +90,12 @@ namespace NativeViewerGUI
       }
     }
 
-    private void form_SizeChanged(object sender, EventArgs e)
+    private void form_LayoutChanged(object sender, EventArgs e)
     {
-      // If the window is resized manually, cursor is located inside the window and this
-      // will update the allowed rectangle based on the window bounds. If the window is 
-      // resized programmatically, cursor may fall out of the window bounds and it will
-      // be correctly included in the allowed rectangle in this case.
+      // If the window's layout (size or location) is changed manually, cursor is located 
+      // inside the window and this will update the allowed rectangle based on the window 
+      // bounds. If the window's layout is changed programmatically, cursor may fall out 
+      // of the window bounds, but it will be correctly included in the allowed rectangle.
       UpdateAllowedRectBasedOnCursorPosition();
     }
 

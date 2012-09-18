@@ -3,7 +3,7 @@
 	<Identifier Id="de71cb4d-8e69-49c9-a4f5-541751816942">
 		<Name>NativeViewer</Name>
 		<Author>Mikhail Matrosov</Author>
-		<Version>0.11</Version>
+		<Version>0.12</Version>
 		<Description xml:space="preserve">Allows to view OpenCV images during debug of native C++ projects.</Description>
 		<Locale>1033</Locale>
 		<MoreInfoUrl>http://sourceforge.net/projects/nativeviewer/</MoreInfoUrl>

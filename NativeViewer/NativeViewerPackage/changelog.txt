@@ -1,5 +1,7 @@
 ﻿NativeViewer by Mikhail Matrosov
 
+==== VSIX version 0.12 / 18.09.2012 ====
+
 [+] Added zoom presets in context menu
 [-] Fixed bug with VS crash during NativeViewer integration when run not under admin
 

@@ -20,6 +20,7 @@
 			</VisualStudio>
 		</SupportedProducts>
 		<SupportedFrameworkRuntimeEdition MinVersion="4.0" MaxVersion="4.0" />
+		<AllUsers>1</AllUsers>
 	</Identifier>
 	<References>
 		<Reference Id="Microsoft.VisualStudio.MPF" MinVersion="10.0">

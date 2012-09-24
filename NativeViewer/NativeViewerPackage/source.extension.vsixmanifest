@@ -29,7 +29,7 @@
 	</References>
 	<Content>
 		<VsPackage>|%CurrentProject%;PkgdefProjectOutputGroup|</VsPackage>
-		<CustomExtension Type="assembly">|NativeViewerGUI|</CustomExtension>
-		<CustomExtension Type="assembly">|NativeViewer|</CustomExtension>
+		<CustomExtension Type="assembly">|NativeViewerGUI10|</CustomExtension>
+		<CustomExtension Type="assembly">|NativeViewer10|</CustomExtension>
 	</Content>
 </Vsix>

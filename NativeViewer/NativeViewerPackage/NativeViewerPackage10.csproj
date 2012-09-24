@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NativeViewerPackage</RootNamespace>
-    <AssemblyName>NativeViewerPackage</AssemblyName>
+    <AssemblyName>NativeViewerPackage10</AssemblyName>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>Resources\Key.snk</AssemblyOriginatorKeyFile>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
@@ -180,15 +180,15 @@
     <Content Include="Resources\Package.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NativeViewerGUI\NativeViewerGUI.csproj">
+    <ProjectReference Include="..\NativeViewerGUI\NativeViewerGUI10.csproj">
       <Project>{BE043154-EFA8-459D-9266-C2D959152F9D}</Project>
-      <Name>NativeViewerGUI</Name>
+      <Name>NativeViewerGUI10</Name>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3b</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
     </ProjectReference>
-    <ProjectReference Include="..\NativeViewer\NativeViewer.vcxproj">
+    <ProjectReference Include="..\NativeViewer\NativeViewer10.vcxproj">
       <Project>{E9F1C3A6-7A43-4FD5-B3F7-DF63F2F24941}</Project>
-      <Name>NativeViewer</Name>
+      <Name>NativeViewer10</Name>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3b</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
     </ProjectReference>

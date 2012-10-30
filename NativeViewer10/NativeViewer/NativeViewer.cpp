@@ -24,6 +24,9 @@ enum ImageFormat
   ifRGB, ifBGR
 };
 
+// The value of the _MSC_VER is equal to 1600 for VS10 and 1700 for VS11
+const int VS_MAJOR_VER = _MSC_VER / 100 - 6;
+
 //////////////////////////////////////////////////////////////////////////
 ///
 void CheckPrerequisites(DEBUGHELPER *pHelper)
@@ -266,8 +269,9 @@ void ShowThumbnail(DEBUGHELPER *pHelper, const CvMatHeader& header)
       // references since .NET framework will only search application path and GAC for
       // the reference, but it resides near the current dll.
       String^ path = Path::GetDirectoryName(
-        Assembly::GetExecutingAssembly()->Location) + Path::DirectorySeparatorChar;
-      Assembly^ GUI = Assembly::LoadFrom(path + "NativeViewerGUI.dll");
+        Assembly::GetExecutingAssembly()->Location) + Path::DirectorySeparatorChar;      
+      Assembly^ GUI = Assembly::LoadFrom(
+        path + "NativeViewerGUI" + Int32(VS_MAJOR_VER).ToString() + ".dll");
       Type^ FormMain = GUI->GetType("NativeViewerGUI.FormMain");
       MethodInfo^ ShowDialog = FormMain->GetMethod("ShowDialog", gcnew array<Type^>{});
 
@@ -322,12 +326,12 @@ HRESULT WINAPI CvMatViewer(DWORD dwAddress, DEBUGHELPER *pHelper,
   {
     // This type of exception indicates an improper use and should be displayed 
     // to the user as an information message
-    sprintf_s(pResult, max, "NativeViewer: %s.", e.what());
+    _snprintf_s(pResult, max, _TRUNCATE, "NativeViewer: %s.", e.what());
   }
   catch (std::exception& e)
   {
     // This type of exception indicates some real error
-    sprintf_s(pResult, max, "NativeViewer error: %s.", e.what());
+    _snprintf_s(pResult, max, _TRUNCATE, "NativeViewer error: %s.", e.what());
   }
 
   return S_OK;

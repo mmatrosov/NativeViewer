@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace NativeViewerPackage
+namespace NativeViewerPackage10
 {
   [ClassInterface(ClassInterfaceType.AutoDual)]
   public class OptionsPageIntegration : DialogPage

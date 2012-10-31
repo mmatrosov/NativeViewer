@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+	<Metadata>
+		<Identity Id="cc119ce6-70e8-4e92-a486-822d5a238a93" Version="0.12" Language="en-US" Publisher="Mikhail Matrosov" />
+		<DisplayName>NativeViewer</DisplayName>
+		<Description xml:space="preserve">Allows to view OpenCV images during debug of native C++ projects.</Description>
+		<MoreInfo>http://sourceforge.net/projects/nativeviewer/</MoreInfo>
+		<License>res\license.txt</License>
+		<GettingStartedGuide>https://sourceforge.net/p/nativeviewer/wiki/QuickStartGuide/</GettingStartedGuide>
+		<ReleaseNotes>changelog.txt</ReleaseNotes>
+		<Icon>res\icon.png</Icon>
+		<PreviewImage>res\preview.png</PreviewImage>
+	</Metadata>
+	<Installation InstalledByMsi="false">
+		<InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="11.0" />
+	</Installation>
+	<Dependencies>
+		<Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="4.5" />
+		<Dependency Id="Microsoft.VisualStudio.MPF.11.0" DisplayName="Visual Studio MPF 11.0" d:Source="Installed" Version="11.0" />
+	</Dependencies>
+	<Assets>
+		<Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+		<Asset Type="NativeVisualizer" Path="NativeViewer.natvis"/>
+		<Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="NativeViewer11" Path="|NativeViewer11|" AssemblyName="|NativeViewer11;AssemblyName|" />
+		<Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="NativeViewerGUI11" Path="|NativeViewerGUI11|" AssemblyName="|NativeViewerGUI11;AssemblyName|" />
+	</Assets>
+</PackageManifest>

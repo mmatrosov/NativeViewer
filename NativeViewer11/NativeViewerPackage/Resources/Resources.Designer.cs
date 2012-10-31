@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace NativeViewerPackage10.Resources {
+namespace NativeViewerPackage11.NativeViewerPackage11.Resources {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace NativeViewerPackage10.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("NativeViewerPackage10.Resources.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("NativeViewerPackage11.NativeViewerPackage11.Resources.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

@@ -1,4 +1,4 @@
-﻿namespace NativeViewerPackage
+﻿namespace NativeViewerPackage10
 {
   partial class OptionsPageIntegrationControl
   {

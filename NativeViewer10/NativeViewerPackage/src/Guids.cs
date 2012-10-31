@@ -2,7 +2,7 @@
 // MUST match guids.h
 using System;
 
-namespace NativeViewerPackage
+namespace NativeViewerPackage10
 {
     static class GuidList
     {

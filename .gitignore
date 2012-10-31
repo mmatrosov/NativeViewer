@@ -10,5 +10,7 @@ obj/
 
 !/NativeViewerTest/NativeViewerTest/bin/Debug/
 !/NativeViewerTest/NativeViewerTest/bin/Release/
-!/NativeViewer/NativeViewerLauncher/bin/Debug/
-!/NativeViewer/NativeViewerLauncher/bin/Release/
+!/NativeViewer10/NativeViewerLauncher/bin/Debug/
+!/NativeViewer10/NativeViewerLauncher/bin/Release/
+!/NativeViewer11/NativeViewerLauncher/bin/Debug/
+!/NativeViewer11/NativeViewerLauncher/bin/Release/

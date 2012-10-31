@@ -11,7 +11,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Reflection;
 
-namespace NativeViewerPackage
+namespace NativeViewerPackage10
 {
   public partial class OptionsPageIntegrationControl : UserControl
   {

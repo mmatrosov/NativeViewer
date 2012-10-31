@@ -12,7 +12,7 @@ using System.Reflection;
 using System.Xml.Serialization;
 using System.Windows.Forms;
 
-namespace NativeViewerPackage10
+namespace NativeViewerPackage11
 {
   [ClassInterface(ClassInterfaceType.AutoDual)]
   [CLSCompliant(false), ComVisible(true)]

@@ -29,7 +29,7 @@ const int VS_MAJOR_VER = _MSC_VER / 100 - 6;
 
 //////////////////////////////////////////////////////////////////////////
 ///
-void CheckPrerequisites(DEBUGHELPER *pHelper)
+void CheckPrerequisites(DEBUGHELPER* pHelper)
 {
   if (pHelper->dwVersion < 0x20000)
   {
@@ -40,7 +40,7 @@ void CheckPrerequisites(DEBUGHELPER *pHelper)
 //////////////////////////////////////////////////////////////////////////
 ///
 void ReadDebuggeeMemoryChecked(
-  DEBUGHELPER *pHelper, DWORDLONG qwAddr, DWORD nWant, void* pWhere)
+  DEBUGHELPER* pHelper, DWORDLONG qwAddr, DWORD nWant, void* pWhere)
 {
   DWORD nGot;
   HRESULT result = pHelper->ReadDebuggeeMemoryEx(pHelper, qwAddr, nWant, pWhere, &nGot);
@@ -53,7 +53,7 @@ void ReadDebuggeeMemoryChecked(
 
 //////////////////////////////////////////////////////////////////////////
 ///
-void ReadHeader(DEBUGHELPER *pHelper, CvMatHeader* pHeader)
+void ReadHeader(DEBUGHELPER* pHelper, CvMatHeader* pHeader)
 {
   // Size of pointer in the debuggee context, may be 32 bits (4 bytes) or 
   // 64 bits (8 bytes) depending on the platform (processor type)
@@ -76,7 +76,7 @@ void ReadHeader(DEBUGHELPER *pHelper, CvMatHeader* pHeader)
   // Minimum number of dimensions is 2, or 0 for empty cv::Mat
   if (dims < 0 || dims > CV_MAX_DIM || dims == 1)
   {
-    throw std::runtime_error("illegal number of dimensions");
+    throw std::logic_error("illegal number of dimensions");
   }
 
   if (dims == 0)
@@ -134,7 +134,7 @@ std::string FlagsToString(int flags)
   case CV_64F: ss << "64F";  break;
   case CV_USRTYPE1: ss << "USR";  break;
   default:
-    throw std::runtime_error("unknown cv::Mat depth");
+    throw std::logic_error("unknown cv::Mat depth");
   }
 
   ss << "C" << cn;
@@ -144,7 +144,7 @@ std::string FlagsToString(int flags)
 
 //////////////////////////////////////////////////////////////////////////
 ///
-void FormatResult(const CvMatHeader& header, int base, char *pResult, size_t max)
+void FormatResult(const CvMatHeader& header, int base, char* pResult, size_t max)
 {
   if (header.dims == 0)
   {
@@ -170,7 +170,7 @@ void FormatResult(const CvMatHeader& header, int base, char *pResult, size_t max
 
 //////////////////////////////////////////////////////////////////////////
 ///
-void ReadImageAligned(DEBUGHELPER *pHelper, const CvMatHeader& header, 
+void ReadImageAligned(DEBUGHELPER* pHelper, const CvMatHeader& header, 
   ImageFormat format, std::vector<unsigned char>& dst, int& dst_step)
 {
   struct Color
@@ -239,14 +239,96 @@ ImageFormat LoadImageFormat(System::Reflection::Assembly^ GUI)
   return (int)format == 0 ? ifRGB : ifBGR;
 }
 
+// This class provide the DoWork method which shows the main GUI dialog
+ref class DlgWork
+{
+public:
+  DlgWork(DEBUGHELPER* pHelper, const CvMatHeader* pHeader)
+    : _pHelper(pHelper), _pHeader(pHeader), _exception(nullptr)
+  {
+  }
+
+  // This method is called from a separate thread
+  void DoWork()
+  {
+    try
+    {
+      DoWorkInternal();
+    }
+    catch (System::Exception^ e)
+    {
+      _exception = e;
+    }
+  }
+
+  // Use this method to check for possible exceptions occurred while executing the DoWork
+  // method after the calling thread had finished
+  System::Exception^ GetException()
+  {
+    return _exception;
+  }
+
+private:
+  void DoWorkInternal()
+  {
+    using namespace System;
+    using namespace System::Reflection;
+    using namespace System::Drawing;
+    using namespace System::IO;
+
+    // Load GUI assembly and information from it. It cannot be added through project 
+    // references since .NET framework will only search application path and GAC for
+    // the reference, but it resides near the current dll.
+    String^ path = Path::GetDirectoryName(
+      Assembly::GetExecutingAssembly()->Location) + Path::DirectorySeparatorChar;      
+    Assembly^ GUI = Assembly::LoadFrom(
+      path + "NativeViewerGUI" + Int32(VS_MAJOR_VER).ToString() + ".dll");
+    Type^ FormMain = GUI->GetType("NativeViewerGUI.FormMain");
+    MethodInfo^ ShowDialog = FormMain->GetMethod("ShowDialog", gcnew array<Type^>{});
+
+    // Retrieve format settings
+    ImageFormat format = LoadImageFormat(GUI);
+
+    // Read image contents from debuggee memory
+    int step;
+    std::vector<unsigned char> img;
+    ReadImageAligned(_pHelper, *_pHeader, format, img, step);
+
+    // Initialize .NET image wrapper
+    Imaging::PixelFormat pixel_format = CV_MAT_CN(_pHeader->flags) == 1 ? 
+      Imaging::PixelFormat::Format8bppIndexed : Imaging::PixelFormat::Format24bppRgb;
+    Bitmap^ bmp = gcnew Bitmap(
+      _pHeader->cols, _pHeader->rows, static_cast<int>(step), pixel_format, IntPtr(&img[0]));
+
+    // Pass information on underlying image format
+    bmp->Tag = gcnew String(FlagsToString(_pHeader->flags).c_str());
+
+    // Show GUI
+    array<Object^>^ args = gcnew array<Object^>{ bmp };
+    Object^ form = Activator::CreateInstance(FormMain, args);
+
+    try
+    {
+      ShowDialog->Invoke(form, nullptr);
+    }
+    catch (System::Reflection::TargetInvocationException^ e)
+    {
+      throw e->InnerException;
+    }
+  }
+
+  DEBUGHELPER* _pHelper;
+  const CvMatHeader* _pHeader;
+
+  System::Exception^ _exception;
+};
+
 //////////////////////////////////////////////////////////////////////////
 ///
-void ShowThumbnail(DEBUGHELPER *pHelper, const CvMatHeader& header)
+void ShowThumbnail(DEBUGHELPER* pHelper, const CvMatHeader& header)
 {
   using namespace System;
-  using namespace System::Reflection;
-  using namespace System::Drawing;
-  using namespace System::IO;
+  using namespace System::Threading;
 
   SHORT state = GetAsyncKeyState(VK_CONTROL);
 
@@ -265,37 +347,23 @@ void ShowThumbnail(DEBUGHELPER *pHelper, const CvMatHeader& header)
 
     try
     {
-      // Load GUI assembly and information from it. It cannot be added through project 
-      // references since .NET framework will only search application path and GAC for
-      // the reference, but it resides near the current dll.
-      String^ path = Path::GetDirectoryName(
-        Assembly::GetExecutingAssembly()->Location) + Path::DirectorySeparatorChar;      
-      Assembly^ GUI = Assembly::LoadFrom(
-        path + "NativeViewerGUI" + Int32(VS_MAJOR_VER).ToString() + ".dll");
-      Type^ FormMain = GUI->GetType("NativeViewerGUI.FormMain");
-      MethodInfo^ ShowDialog = FormMain->GetMethod("ShowDialog", gcnew array<Type^>{});
+      DlgWork^ dlg_work = gcnew DlgWork(pHelper, &header);
 
-      // Retrieve format settings
-      ImageFormat format = LoadImageFormat(GUI);
+      // GUI must be shown in a separate thread with the STA apartment state. Visual 
+      // Studio loads the library in a thread with the MTA apartment state, which 
+      // conflicts with some GDI+ features, like modal dialogs.
+      Thread^ dlg_thread = gcnew Thread(gcnew ThreadStart(dlg_work, &DlgWork::DoWork));
+      dlg_thread->SetApartmentState(ApartmentState::STA);
 
-      // Read image contents from debuggee memory
-      int step;
-      std::vector<unsigned char> img;
-      ReadImageAligned(pHelper, header, format, img, step);
+      // Run the thread and wait for it to terminate after the dialog is closed
+      dlg_thread->Start();
+      dlg_thread->Join();
 
-      // Initialize .NET image wrapper
-      Imaging::PixelFormat pixel_format = cn == 1 ? 
-        Imaging::PixelFormat::Format8bppIndexed : Imaging::PixelFormat::Format24bppRgb;
-      Bitmap^ bmp = gcnew Bitmap(
-        header.cols, header.rows, static_cast<int>(step), pixel_format, IntPtr(&img[0]));
-
-      // Pass information on underlying image format
-      bmp->Tag = gcnew String(FlagsToString(header.flags).c_str());
-
-      // Show GUI
-      array<Object^>^ args = gcnew array<Object^>{ bmp };
-      Object^ form = Activator::CreateInstance(FormMain, args);
-      ShowDialog->Invoke(form, nullptr);
+      // Check for possible exceptions occurred while executing the thread
+      if (dlg_work->GetException() != nullptr)
+      {
+        throw dlg_work->GetException();
+      }
     }
     catch (Exception^ e)
     {
@@ -307,8 +375,8 @@ void ShowThumbnail(DEBUGHELPER *pHelper, const CvMatHeader& header)
 
 //////////////////////////////////////////////////////////////////////////
 ///
-HRESULT WINAPI CvMatViewer(DWORD dwAddress, DEBUGHELPER *pHelper, 
-  int nBase, BOOL bUniStrings, char *pResult, size_t max, DWORD reserved)
+HRESULT WINAPI CvMatViewer(DWORD dwAddress, DEBUGHELPER* pHelper, 
+  int nBase, BOOL bUniStrings, char* pResult, size_t max, DWORD reserved)
 {
   try
   {

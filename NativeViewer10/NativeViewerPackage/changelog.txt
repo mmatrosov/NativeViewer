@@ -1,6 +1,7 @@
 ﻿NativeViewer by Mikhail Matrosov
 
 [+] Added support for Visual Studio 2012
+[+] A thumbnail image can now be saved to disk
 [-] Fixed potential crash for errors with long description
 [=] Updated icon and preview image
 

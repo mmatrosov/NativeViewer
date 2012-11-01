@@ -76,7 +76,7 @@ namespace NativeViewerPackage10
 
       // Path to main dll inside package directory
       string dll_path = Path.GetDirectoryName(
-        Assembly.GetExecutingAssembly().Location) + @"\NativeViewer.dll";
+        Assembly.GetExecutingAssembly().Location) + @"\NativeViewer10.dll";
       AutoExpEntry = "cv::Mat=$ADDIN(" + dll_path + ",CvMatViewer)";
     }
 

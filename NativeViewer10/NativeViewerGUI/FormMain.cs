@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.IO;
 
 namespace NativeViewerGUI
 {
@@ -188,6 +189,40 @@ namespace NativeViewerGUI
     {
       // Prior to enabling the window deactivation logic, make sure window will not be 
       // closed at the moment an item is clicked in the context menu
+      _deactivator.UpdateAllowedRectBasedOnCursorPosition();
+      _deactivator.Enable();
+    }
+
+    private void toolStripMenuItemSaveImage_Click(object sender, EventArgs e)
+    {
+      _deactivator.Disable();
+
+      if (saveFileDialogImage.ShowDialog() == DialogResult.OK)
+      {
+        var name = saveFileDialogImage.FileName;
+
+        var filter_entries = saveFileDialogImage.Filter.Split('|');
+        string filter_mask = filter_entries[saveFileDialogImage.FilterIndex * 2 - 1];
+        string filter_ext = Path.GetExtension(filter_mask);
+
+        var ext2format = new Dictionary<string, ImageFormat>
+        {
+          { ".bmp", ImageFormat.Bmp },
+          { ".jpg", ImageFormat.Jpeg },
+          { ".png", ImageFormat.Png }
+        };
+
+        try
+        {
+          pictureBoxThumbnail.Image.Save(saveFileDialogImage.FileName, ext2format[filter_ext]);
+        }
+        catch (System.Exception ex)
+        {
+          MessageBox.Show("Error saving image! " + ex.Message,
+            "NativeViewer", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        }
+      }
+
       _deactivator.UpdateAllowedRectBasedOnCursorPosition();
       _deactivator.Enable();
     }

@@ -41,7 +41,9 @@
       this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
       this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
       this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripMenuItem();
+      this.toolStripMenuItemSaveImage = new System.Windows.Forms.ToolStripMenuItem();
       this.pictureBoxThumbnail = new NativeViewerGUI.MyPictureBox();
+      this.saveFileDialogImage = new System.Windows.Forms.SaveFileDialog();
       this.statusStripMain.SuspendLayout();
       this.contextMenuStripThumbnail.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxThumbnail)).BeginInit();
@@ -87,9 +89,10 @@
       // contextMenuStripThumbnail
       // 
       this.contextMenuStripThumbnail.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItemZoom});
+            this.toolStripMenuItemZoom,
+            this.toolStripMenuItemSaveImage});
       this.contextMenuStripThumbnail.Name = "contextMenuStripThumbnail";
-      this.contextMenuStripThumbnail.Size = new System.Drawing.Size(153, 48);
+      this.contextMenuStripThumbnail.Size = new System.Drawing.Size(184, 48);
       this.contextMenuStripThumbnail.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.contextMenuStripThumbnail_Closed);
       this.contextMenuStripThumbnail.Opened += new System.EventHandler(this.contextMenuStripThumbnail_Opened);
       // 
@@ -102,14 +105,14 @@
             this.toolStripMenuItem4,
             this.toolStripMenuItem5});
       this.toolStripMenuItemZoom.Name = "toolStripMenuItemZoom";
-      this.toolStripMenuItemZoom.Size = new System.Drawing.Size(152, 22);
+      this.toolStripMenuItemZoom.Size = new System.Drawing.Size(183, 22);
       this.toolStripMenuItemZoom.Text = "Zoom";
       // 
       // toolStripMenuItem1
       // 
       this.toolStripMenuItem1.Name = "toolStripMenuItem1";
       this.toolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D1)));
-      this.toolStripMenuItem1.Size = new System.Drawing.Size(142, 22);
+      this.toolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
       this.toolStripMenuItem1.Tag = "";
       this.toolStripMenuItem1.Text = "25%";
       this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItemZoom_Click);
@@ -118,7 +121,7 @@
       // 
       this.toolStripMenuItem2.Name = "toolStripMenuItem2";
       this.toolStripMenuItem2.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D2)));
-      this.toolStripMenuItem2.Size = new System.Drawing.Size(142, 22);
+      this.toolStripMenuItem2.Size = new System.Drawing.Size(152, 22);
       this.toolStripMenuItem2.Tag = "";
       this.toolStripMenuItem2.Text = "50%";
       this.toolStripMenuItem2.Click += new System.EventHandler(this.toolStripMenuItemZoom_Click);
@@ -127,7 +130,7 @@
       // 
       this.toolStripMenuItem3.Name = "toolStripMenuItem3";
       this.toolStripMenuItem3.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D3)));
-      this.toolStripMenuItem3.Size = new System.Drawing.Size(142, 22);
+      this.toolStripMenuItem3.Size = new System.Drawing.Size(152, 22);
       this.toolStripMenuItem3.Tag = "";
       this.toolStripMenuItem3.Text = "100%";
       this.toolStripMenuItem3.Click += new System.EventHandler(this.toolStripMenuItemZoom_Click);
@@ -136,7 +139,7 @@
       // 
       this.toolStripMenuItem4.Name = "toolStripMenuItem4";
       this.toolStripMenuItem4.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D4)));
-      this.toolStripMenuItem4.Size = new System.Drawing.Size(142, 22);
+      this.toolStripMenuItem4.Size = new System.Drawing.Size(152, 22);
       this.toolStripMenuItem4.Tag = "";
       this.toolStripMenuItem4.Text = "200%";
       this.toolStripMenuItem4.Click += new System.EventHandler(this.toolStripMenuItemZoom_Click);
@@ -145,10 +148,18 @@
       // 
       this.toolStripMenuItem5.Name = "toolStripMenuItem5";
       this.toolStripMenuItem5.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D5)));
-      this.toolStripMenuItem5.Size = new System.Drawing.Size(142, 22);
+      this.toolStripMenuItem5.Size = new System.Drawing.Size(152, 22);
       this.toolStripMenuItem5.Tag = "";
       this.toolStripMenuItem5.Text = "400%";
       this.toolStripMenuItem5.Click += new System.EventHandler(this.toolStripMenuItemZoom_Click);
+      // 
+      // toolStripMenuItemSaveImage
+      // 
+      this.toolStripMenuItemSaveImage.Name = "toolStripMenuItemSaveImage";
+      this.toolStripMenuItemSaveImage.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+      this.toolStripMenuItemSaveImage.Size = new System.Drawing.Size(183, 22);
+      this.toolStripMenuItemSaveImage.Text = "Save image...";
+      this.toolStripMenuItemSaveImage.Click += new System.EventHandler(this.toolStripMenuItemSaveImage_Click);
       // 
       // pictureBoxThumbnail
       // 
@@ -161,6 +172,13 @@
       this.pictureBoxThumbnail.TabIndex = 1;
       this.pictureBoxThumbnail.TabStop = false;
       this.pictureBoxThumbnail.SizeChanged += new System.EventHandler(this.pictureBoxThumbnail_SizeChanged);
+      // 
+      // saveFileDialogImage
+      // 
+      this.saveFileDialogImage.Filter = "BMP - Windows Bitmap|*.bmp|JPG - JPG/JPEG format|*.jpg|PNG - Portable Network Gra" +
+    "phics|*.png";
+      this.saveFileDialogImage.FilterIndex = 3;
+      this.saveFileDialogImage.Title = "Save image...";
       // 
       // FormMain
       // 
@@ -199,5 +217,7 @@
     private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem3;
     private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem4;
     private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem5;
+    private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemSaveImage;
+    private System.Windows.Forms.SaveFileDialog saveFileDialogImage;
   }
 }

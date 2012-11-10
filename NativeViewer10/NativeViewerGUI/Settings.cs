@@ -11,16 +11,12 @@ using System.IO;
 namespace NativeViewerGUI
 {
   // This class is accessed from both NativeViewerGUI and NativeViewerPackage projects
-  public enum RootEnum
-  {
-    RGB, BGR
-  }
-
   public class Settings
   {
     public enum TImageFormat
     {
-      RGB, BGR
+      RGB = 0, 
+      BGR = 1
     }
 
     public InterpolationMode InterpModeStretch { get; set; }

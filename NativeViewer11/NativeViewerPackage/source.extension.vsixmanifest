@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
 	<Metadata>
-		<Identity Id="cc119ce6-70e8-4e92-a486-822d5a238a93" Version="0.12" Language="en-US" Publisher="Mikhail Matrosov" />
+		<Identity Id="cc119ce6-70e8-4e92-a486-822d5a238a93" Version="1.0.0" Language="en-US" Publisher="Mikhail Matrosov" />
 		<DisplayName>NativeViewer</DisplayName>
 		<Description xml:space="preserve">Allows to view OpenCV images during debug of native C++ projects.</Description>
 		<MoreInfo>http://sourceforge.net/projects/nativeviewer/</MoreInfo>

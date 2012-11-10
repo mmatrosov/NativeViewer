@@ -21,7 +21,8 @@ public:
 
 enum ImageFormat
 {
-  ifRGB, ifBGR
+  ifRGB = 0, 
+  ifBGR = 1
 };
 
 // The value of the _MSC_VER is equal to 1600 for VS10 and 1700 for VS11
@@ -243,8 +244,8 @@ ImageFormat LoadImageFormat(System::Reflection::Assembly^ GUI)
 ref class DlgWork
 {
 public:
-  DlgWork(DEBUGHELPER* pHelper, const CvMatHeader* pHeader)
-    : _pHelper(pHelper), _pHeader(pHeader), _exception(nullptr)
+  DlgWork(System::Reflection::Assembly^ gui_assembly, System::Drawing::Bitmap^ image)
+    : _gui_assembly(gui_assembly), _image(image), _exception(nullptr)
   {
   }
 
@@ -273,42 +274,17 @@ private:
   {
     using namespace System;
     using namespace System::Reflection;
-    using namespace System::Drawing;
-    using namespace System::IO;
 
-    // Load GUI assembly and information from it. It cannot be added through project 
-    // references since .NET framework will only search application path and GAC for
-    // the reference, but it resides near the current dll.
-    String^ path = Path::GetDirectoryName(
-      Assembly::GetExecutingAssembly()->Location) + Path::DirectorySeparatorChar;      
-    Assembly^ GUI = Assembly::LoadFrom(
-      path + "NativeViewerGUI" + Int32(VS_MAJOR_VER).ToString() + ".dll");
-    Type^ FormMain = GUI->GetType("NativeViewerGUI.FormMain");
+    Type^ FormMain = _gui_assembly->GetType("NativeViewerGUI.FormMain");
     MethodInfo^ ShowDialog = FormMain->GetMethod("ShowDialog", gcnew array<Type^>{});
 
-    // Retrieve format settings
-    ImageFormat format = LoadImageFormat(GUI);
-
-    // Read image contents from debuggee memory
-    int step;
-    std::vector<unsigned char> img;
-    ReadImageAligned(_pHelper, *_pHeader, format, img, step);
-
-    // Initialize .NET image wrapper
-    Imaging::PixelFormat pixel_format = CV_MAT_CN(_pHeader->flags) == 1 ? 
-      Imaging::PixelFormat::Format8bppIndexed : Imaging::PixelFormat::Format24bppRgb;
-    Bitmap^ bmp = gcnew Bitmap(
-      _pHeader->cols, _pHeader->rows, static_cast<int>(step), pixel_format, IntPtr(&img[0]));
-
-    // Pass information on underlying image format
-    bmp->Tag = gcnew String(FlagsToString(_pHeader->flags).c_str());
-
-    // Show GUI
-    array<Object^>^ args = gcnew array<Object^>{ bmp };
+    // Create GUI
+    array<Object^>^ args = gcnew array<Object^>{ _image };
     Object^ form = Activator::CreateInstance(FormMain, args);
 
     try
     {
+      // Show GUI
       ShowDialog->Invoke(form, nullptr);
     }
     catch (System::Reflection::TargetInvocationException^ e)
@@ -317,8 +293,8 @@ private:
     }
   }
 
-  DEBUGHELPER* _pHelper;
-  const CvMatHeader* _pHeader;
+  System::Reflection::Assembly^ _gui_assembly;
+  System::Drawing::Bitmap^ _image;
 
   System::Exception^ _exception;
 };
@@ -329,6 +305,9 @@ void ShowThumbnail(DEBUGHELPER* pHelper, const CvMatHeader& header)
 {
   using namespace System;
   using namespace System::Threading;
+  using namespace System::IO;
+  using namespace System::Reflection;
+  using namespace System::Drawing;
 
   SHORT state = GetAsyncKeyState(VK_CONTROL);
 
@@ -347,11 +326,36 @@ void ShowThumbnail(DEBUGHELPER* pHelper, const CvMatHeader& header)
 
     try
     {
-      DlgWork^ dlg_work = gcnew DlgWork(pHelper, &header);
+      // Load GUI assembly and information from it. It cannot be added through project 
+      // references since .NET framework will only search application path and GAC for
+      // the reference, but it resides near the current dll.
+      String^ path = Path::GetDirectoryName(
+        Assembly::GetExecutingAssembly()->Location) + Path::DirectorySeparatorChar;      
+      Assembly^ gui_assembly = Assembly::LoadFrom(
+        path + "NativeViewerGUI" + Int32(VS_MAJOR_VER).ToString() + ".dll");
+
+      // Retrieve format settings
+      ImageFormat format = LoadImageFormat(gui_assembly);
+
+      // Read image contents from debuggee memory. It should be read from the current 
+      // thread, because otherwise it's not working under Visual Studio 2012.
+      int step;
+      std::vector<unsigned char> buffer;
+      ReadImageAligned(pHelper, header, format, buffer, step);
+
+      // Initialize .NET image wrapper
+      Imaging::PixelFormat pixel_format = CV_MAT_CN(header.flags) == 1 ? 
+        Imaging::PixelFormat::Format8bppIndexed : Imaging::PixelFormat::Format24bppRgb;
+      Bitmap^ image = gcnew Bitmap(
+        header.cols, header.rows, static_cast<int>(step), pixel_format, IntPtr(&buffer[0]));
+
+      // Pass information on underlying image format
+      image->Tag = gcnew String(FlagsToString(header.flags).c_str());
 
       // GUI must be shown in a separate thread with the STA apartment state. Visual 
       // Studio loads the library in a thread with the MTA apartment state, which 
       // conflicts with some GDI+ features, like modal dialogs.
+      DlgWork^ dlg_work = gcnew DlgWork(gui_assembly, image);
       Thread^ dlg_thread = gcnew Thread(gcnew ThreadStart(dlg_work, &DlgWork::DoWork));
       dlg_thread->SetApartmentState(ApartmentState::STA);
 

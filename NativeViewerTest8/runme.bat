@@ -1,0 +1,1 @@
+xcopy /E NativeViewerTest8\bin\* .\

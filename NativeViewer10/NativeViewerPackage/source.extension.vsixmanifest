@@ -3,7 +3,7 @@
 	<Identifier Id="de71cb4d-8e69-49c9-a4f5-541751816942">
 		<Name>NativeViewer</Name>
 		<Author>Mikhail Matrosov</Author>
-		<Version>1.0.0</Version>
+		<Version>1.0.1</Version>
 		<Description xml:space="preserve">Allows to view OpenCV images during debug of native C++ projects.</Description>
 		<Locale>1033</Locale>
 		<MoreInfoUrl>http://sourceforge.net/projects/nativeviewer/</MoreInfoUrl>
@@ -20,7 +20,7 @@
 			</VisualStudio>
 		</SupportedProducts>
 		<SupportedFrameworkRuntimeEdition MinVersion="4.0" MaxVersion="4.0" />
-		<AllUsers>true</AllUsers>
+		<AllUsers>false</AllUsers>
 	</Identifier>
 	<References>
 		<Reference Id="Microsoft.VisualStudio.MPF" MinVersion="10.0">

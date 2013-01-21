@@ -13,5 +13,6 @@
 #include <algorithm>
 #include <iomanip>
 #include <sstream>
+#include <limits>
 
 #include <msclr/marshal_cppstd.h>

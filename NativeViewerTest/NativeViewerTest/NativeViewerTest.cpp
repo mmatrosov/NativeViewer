@@ -17,6 +17,15 @@ int _tmain(int argc, _TCHAR* argv[])
       0, 0, 255 
     };
     cv::Mat rgb(1, 3, CV_8UC3, rgb_data);
+
+    cv::Mat tmp;
+    img.convertTo(tmp, CV_8U);
+    img.convertTo(tmp, CV_8S);
+    img.convertTo(tmp, CV_16U, UINT16_MAX);
+    img.convertTo(tmp, CV_16S, INT16_MAX);
+    img.convertTo(tmp, CV_32S, INT32_MAX);
+    img.convertTo(tmp, CV_32F, 1.0 / 255);
+    img.convertTo(tmp, CV_64F, 1.0 / 255);
     
     int ndims = CV_MAX_DIM;
     std::vector<int> sizes(ndims, 1);

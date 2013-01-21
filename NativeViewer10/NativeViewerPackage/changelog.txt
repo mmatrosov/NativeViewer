@@ -1,5 +1,7 @@
 ﻿NativeViewer by Mikhail Matrosov
 
+[+] Added support for all types of images (was only CV_8U)
+
 ==== VSIX version 1.0.1 / 13.12.2012 ====
 
 [-] Fixed extension not working because of installation inside Visual Studio directory under Win x64

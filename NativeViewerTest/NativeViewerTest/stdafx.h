@@ -16,3 +16,4 @@
 
 #include <vector>
 #include <iostream>
+#include <intsafe.h>

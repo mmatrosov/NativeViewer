@@ -2,6 +2,8 @@
 
 #include "custview.h"
 
+#undef max
+
 //////////////////////////////////////////////////////////////////////////
 /// Unmanaged functions
 //////////////////////////////////////////////////////////////////////////
@@ -171,6 +173,54 @@ void FormatResult(const CvMatHeader& header, int base, char* pResult, size_t max
 
 //////////////////////////////////////////////////////////////////////////
 ///
+template <class T>
+void ReadMemoryAndConvertTyped(
+  DEBUGHELPER* pHelper, DWORDLONG qwAddr, int count, unsigned char* pWhere)
+{
+  std::vector<T> buf(count);
+
+  ReadDebuggeeMemoryChecked(pHelper, qwAddr, count * sizeof(T), &buf[0]);
+
+  double scale;
+
+  if (std::numeric_limits<T>::is_integer)
+  {
+    // Clip integral types to zero, map the whole range
+    scale = 255.0 / std::numeric_limits<T>::max();
+  }
+  else
+  {
+    // Conversion from the [0; 1] range for floating point types
+    scale = 255.0;
+  }
+
+  for (int i = 0; i < count; ++i)
+  {
+    pWhere[i] = static_cast<unsigned char>(buf[i] * scale);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////
+///
+void ReadMemoryAndConvert(
+  DEBUGHELPER* pHelper, DWORDLONG qwAddr, int count, unsigned char* pWhere, int cvDepth)
+{
+  switch (cvDepth)
+  {
+  case CV_8U:  ReadMemoryAndConvertTyped< UINT8>(pHelper, qwAddr, count, pWhere); break;
+  case CV_8S:  ReadMemoryAndConvertTyped<  INT8>(pHelper, qwAddr, count, pWhere); break;
+  case CV_16U: ReadMemoryAndConvertTyped<UINT16>(pHelper, qwAddr, count, pWhere); break;
+  case CV_16S: ReadMemoryAndConvertTyped< INT16>(pHelper, qwAddr, count, pWhere); break;
+  case CV_32S: ReadMemoryAndConvertTyped< INT32>(pHelper, qwAddr, count, pWhere); break;
+  case CV_32F: ReadMemoryAndConvertTyped< float>(pHelper, qwAddr, count, pWhere); break;
+  case CV_64F: ReadMemoryAndConvertTyped<double>(pHelper, qwAddr, count, pWhere); break;
+  default:
+    throw std::logic_error("unknown cv::Mat depth");
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////
+///
 void ReadImageAligned(DEBUGHELPER* pHelper, const CvMatHeader& header, 
   ImageFormat format, std::vector<unsigned char>& dst, int& dst_step)
 {
@@ -180,8 +230,12 @@ void ReadImageAligned(DEBUGHELPER* pHelper, const CvMatHeader& header,
   };
 
   const int height = header.rows;
+  const int width = header.cols;
   const int src_step = static_cast<int>(header.step[0]);
-  const int line_size = static_cast<int>(header.cols * header.step[1]);
+  const int line_size = static_cast<int>(width * header.step[1]);
+
+  const int depth = CV_MAT_DEPTH(header.flags);
+  const int cn = CV_MAT_CN(header.flags);
 
   // Seems like .NET Bitmap requires step to be multiple of 4, so round it up 
   dst_step = (line_size + 3) & ~3;
@@ -193,10 +247,10 @@ void ReadImageAligned(DEBUGHELPER* pHelper, const CvMatHeader& header,
 
   for (int i = 0; i < height; ++i)
   {
-    ReadDebuggeeMemoryChecked(pHelper, pSrc, line_size, pDst);
+    ReadMemoryAndConvert(pHelper, pSrc, width * cn, pDst, depth);
 
     // Internal .NET Bitmap format is BGR, so conversion is only needed for RGB
-    if (format == ifRGB && CV_MAT_CN(header.flags) == 3)
+    if (format == ifRGB && cn == 3)
     {
       // I don't want to include OpenCV at this point, so the raw loop is used 
       // instead of cv::cvtColor()
@@ -318,10 +372,10 @@ void ShowThumbnail(DEBUGHELPER* pHelper, const CvMatHeader& header)
     const int depth = CV_MAT_DEPTH(header.flags);
     const int cn = CV_MAT_CN(header.flags);
 
-    if (header.dims != 2 || depth != CV_8U || cn != 1 && cn != 3)
+    if (header.dims != 2 || cn != 1 && cn != 3)
     {
       throw std::logic_error(
-        "only 2-D arrays of type CV_8UC1 or CV_8UC3 are supported for thumbnails");
+        "thumbnails are supported only for 2D arrays with one or three channels");
     }
 
     try

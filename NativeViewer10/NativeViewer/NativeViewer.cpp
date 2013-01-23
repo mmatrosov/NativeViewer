@@ -2,8 +2,6 @@
 
 #include "custview.h"
 
-#undef max
-
 //////////////////////////////////////////////////////////////////////////
 /// Unmanaged functions
 //////////////////////////////////////////////////////////////////////////
@@ -196,7 +194,7 @@ void ReadMemoryAndConvertTyped(
 
   for (int i = 0; i < count; ++i)
   {
-    pWhere[i] = static_cast<unsigned char>(buf[i] * scale);
+    pWhere[i] = static_cast<unsigned char>(std::min(std::max(0.0, buf[i] * scale), 255.0));
   }
 }
 
